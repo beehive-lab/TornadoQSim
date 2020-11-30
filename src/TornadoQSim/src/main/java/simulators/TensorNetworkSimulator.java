@@ -1,2 +1,4 @@
-package Simulators;public class TensorNetworkSimulator {
+package simulators;
+
+public class TensorNetworkSimulator {
 }
