@@ -1,1 +1,0 @@
-{"noQubits":4,"steps":[{"gates":[{"type":"H","connections":[0]}]},{"gates":[{"type":"CNOT","connections":[0,1]}]},{"gates":[{"type":"X","connections":[0]},{"type":"CNOT","connections":[1,2]}]},{"gates":[{"type":"X","connections":[0]},{"type":"H","connections":[1]},{"type":"CNOT","connections":[2,3]}]}]}
