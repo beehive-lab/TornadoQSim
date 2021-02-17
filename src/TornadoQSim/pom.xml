@@ -6,13 +6,18 @@
 
     <groupId>groupId</groupId>
     <artifactId>TornadoQSim</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <properties>
+        <manifold.version>2020.1.47</manifold.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
         <repository>
             <id>universityOfManchester-graal</id>
             <url>https://raw.githubusercontent.com/beehive-lab/tornado/maven-tornadovm</url>
@@ -25,6 +30,11 @@
             <artifactId>tornado-api</artifactId>
             <version>0.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.5.2</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -35,6 +45,9 @@
                 <version>3.8.1</version>
                 <configuration>
                     <release>11</release>
+                    <source>11</source>
+                    <target>11</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
