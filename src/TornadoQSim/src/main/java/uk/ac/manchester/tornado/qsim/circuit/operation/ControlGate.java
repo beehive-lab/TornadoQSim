@@ -48,7 +48,11 @@ public class ControlGate implements Operation {
 
     @Override
     public int[] involvedQubits() {
-        return new int[] { this.control, this.target };
+        int[] qubits = new int[size()];
+        int fromQubit = this.control < this.target ? this.control : this.target;
+        for (int i = 0; i < qubits.length; i++)
+            qubits[i] = fromQubit + i;
+        return qubits;
     }
 
     /**

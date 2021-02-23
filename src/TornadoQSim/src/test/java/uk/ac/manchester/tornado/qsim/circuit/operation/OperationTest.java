@@ -33,7 +33,7 @@ public class OperationTest {
         assertEquals(GateType.X, cGate.type());
         assertEquals(4, cGate.controlQubit());
         assertEquals(0, cGate.targetQubit());
-        assertArrayEquals(new int[] { 4, 0 }, cGate.involvedQubits());
+        assertArrayEquals(new int[] { 0, 1, 2, 3, 4 }, cGate.involvedQubits());
         assertEquals(5, cGate.size());
 
         assertEquals(new ControlGate(GateType.X, 4, 0), cGate);
