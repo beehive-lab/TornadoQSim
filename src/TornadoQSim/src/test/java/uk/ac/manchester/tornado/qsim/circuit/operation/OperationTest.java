@@ -26,6 +26,8 @@ public class OperationTest {
         assertEquals(q[0], gate.targetQubit());
         assertArrayEquals(new Qubit[] { q[0] }, gate.involvedQubits());
 
+        assertEquals(new Gate(GateType.H, q[0]), gate);
+
         assertThrows(IllegalArgumentException.class, () -> new Gate(GateType.H, null));
     }
 
@@ -42,6 +44,8 @@ public class OperationTest {
         assertEquals(q[4], cGate.controlQubit());
         assertEquals(q[0], cGate.targetQubit());
         assertArrayEquals(new Qubit[] { q[4], q[0] }, cGate.involvedQubits());
+
+        assertEquals(new ControlGate(GateType.X, q[4], q[0]), cGate);
 
         assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, q[0], null));
         assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, null, q[0]));
@@ -63,6 +67,8 @@ public class OperationTest {
         assertArrayEquals(new Qubit[] { q[2], q[3] }, qFunction.targetQubits());
         assertArrayEquals(new Qubit[] { q[2], q[3] }, qFunction.involvedQubits());
 
+        assertEquals(new Function("custom", q[2],q[3]), qFunction);
+
         assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, null));
         assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, new Qubit[0]));
         assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, q[0],q[2],q[3]));
@@ -81,6 +87,8 @@ public class OperationTest {
         assertEquals(InstructionType.Measure, instruction.type());
         assertEquals(q[0], instruction.targetQubit());
         assertArrayEquals(new Qubit[] { q[0] }, instruction.involvedQubits());
+
+        assertEquals(new Instruction(InstructionType.Measure, q[0]), instruction);
 
         assertThrows(IllegalArgumentException.class, () -> new Instruction(InstructionType.Measure, null));
     }

@@ -3,6 +3,8 @@ package uk.ac.manchester.tornado.qsim.circuit.operation;
 import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.InstructionType;
 
+import java.util.Objects;
+
 /**
  * Represents a standard non-unitary operation (instruction) that acts on single target qubit in the circuit.
  * @author Ales Kubicek
@@ -40,4 +42,16 @@ public class Instruction implements Operation {
         return new Qubit[] { this.target };
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Instruction that = (Instruction) o;
+        return type == that.type && target.equals(that.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, target);
+    }
 }

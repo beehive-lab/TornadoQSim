@@ -3,6 +3,9 @@ package uk.ac.manchester.tornado.qsim.circuit.operation;
 import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.FunctionType;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Represents a unitary quantum function that is a composit of multiple standard quantum gates. The function can be
  * applied to adjacent qubits only (targets) and the main purpose is to simplify and speed up the quantum simulation
@@ -75,6 +78,21 @@ public class Function implements Operation {
     @Override
     public Qubit[] involvedQubits() {
         return this.targets;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Function function = (Function) o;
+        return type == function.type && name.equals(function.name) && Arrays.equals(targets, function.targets);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(type, name);
+        result = 31 * result + Arrays.hashCode(targets);
+        return result;
     }
 
     private boolean areQubitsAdjacent(Qubit[] qubits) {

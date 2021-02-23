@@ -3,6 +3,8 @@ package uk.ac.manchester.tornado.qsim.circuit.operation;
 import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
 
+import java.util.Objects;
+
 /**
  * Represents a standard quantum logic gate that acts on single target qubit in the circuit.
  * @author Ales Kubicek
@@ -38,5 +40,18 @@ public class Gate implements Operation {
     @Override
     public Qubit[] involvedQubits() {
         return new Qubit[] { this.target };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Gate gate = (Gate) o;
+        return type == gate.type && target.equals(gate.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, target);
     }
 }

@@ -3,6 +3,8 @@ package uk.ac.manchester.tornado.qsim.circuit.operation;
 import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
 
+import java.util.Objects;
+
 /**
  * Represents a standard quantum logic gate that is conditionally controlled by another qubit in the circuit.
  * The control qubit does not need to be adjacent to the target qubit.
@@ -50,5 +52,18 @@ public class ControlGate implements Operation {
     @Override
     public Qubit[] involvedQubits() {
         return new Qubit[] { this.control, this.target };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ControlGate that = (ControlGate) o;
+        return type == that.type && control.equals(that.control) && target.equals(that.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, control, target);
     }
 }
