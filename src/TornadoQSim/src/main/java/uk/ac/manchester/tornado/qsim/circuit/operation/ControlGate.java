@@ -20,7 +20,9 @@ public class ControlGate implements Operation {
      * @param control qubit that conditionally controls the standard quantum gate.
      * @param target qubit to which the standard quatum gate applies.
      */
-    protected ControlGate(GateType type, int control, int target) {
+    public ControlGate(GateType type, int control, int target) {
+        if (control < 0 || target < 0)
+            throw new IllegalArgumentException("Invalid control or target qubit supplied.");
         if (control == target)
             throw new IllegalArgumentException("Control and target qubits must act on different qubits.");
         this.type = type;

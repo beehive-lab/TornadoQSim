@@ -23,8 +23,8 @@ public class Function implements Operation {
      * @param fromQubit function range start qubit (inclusive).
      * @param toQubit function range end qubit (inclusive).
      */
-    protected Function(FunctionType type, int fromQubit, int toQubit) {
-        if (fromQubit > toQubit)
+    public Function(FunctionType type, int fromQubit, int toQubit) {
+        if (fromQubit > toQubit || fromQubit < 0)
             throw new IllegalArgumentException("Invalid qubit range supplied.");
         if (type == FunctionType.Custom)
             throw new IllegalArgumentException("Custom name needed when creating custom function.");
@@ -40,8 +40,8 @@ public class Function implements Operation {
      * @param fromQubit function range start qubit (inclusive).
      * @param toQubit function range end qubit (inclusive).
      */
-    protected Function(String name, int fromQubit, int toQubit) {
-        if (fromQubit > toQubit)
+    public Function(String name, int fromQubit, int toQubit) {
+        if (fromQubit > toQubit || fromQubit < 0)
             throw new IllegalArgumentException("Invalid qubit range supplied.");
         this.type = FunctionType.Custom;
         this.name = name;

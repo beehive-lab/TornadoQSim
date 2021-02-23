@@ -18,6 +18,8 @@ public class Instruction implements Operation {
      * @param target qubit to which the standard quatum instruction applies.
      */
     public Instruction(InstructionType type, int target) {
+        if (target < 0)
+            throw new IllegalArgumentException("Invalid target qubit supplied.");
         this.type = type;
         this.target = target;
     }

@@ -18,6 +18,8 @@ public class OperationTest {
         assertEquals(1, gate.size());
 
         assertEquals(new Gate(GateType.H, 0), gate);
+
+        assertThrows(IllegalArgumentException.class, () -> new Gate(GateType.X, -1));
     }
 
     @Test
@@ -39,6 +41,8 @@ public class OperationTest {
         assertEquals(new ControlGate(GateType.X, 4, 0), cGate);
 
         assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, 3, 3));
+        assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, 3, -1));
     }
 
     @Test
@@ -60,6 +64,8 @@ public class OperationTest {
         assertEquals(new Function("custom", 2, 3), qFunction);
 
         assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, 3, 2));
+        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, 3, -1));
         assertThrows(IllegalArgumentException.class, () -> new Function("custom", 3, 2));
     }
 
@@ -72,5 +78,7 @@ public class OperationTest {
         assertEquals(1, instruction.size());
 
         assertEquals(new Instruction(InstructionType.Measure, 0), instruction);
+
+        assertThrows(IllegalArgumentException.class, () -> new Instruction(InstructionType.Measure, -1));
     }
 }
