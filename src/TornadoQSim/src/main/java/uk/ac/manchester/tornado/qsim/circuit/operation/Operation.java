@@ -1,7 +1,5 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
-import uk.ac.manchester.tornado.qsim.circuit.Qubit;
-
 /**
  * Reperesents any operation that can be applied to a quantum circuit at some step.
  * @author Ales Kubicek
@@ -11,5 +9,11 @@ public interface Operation {
      * Gets all involved qubits in this operation.
      * @return involved qubits.
      */
-    public Qubit[] involvedQubits();
+    public int[] involvedQubits();
+
+    /**
+     * Gets the size (number of qubits), that the operation occupies in a circuit step.
+     * @return operation size.
+     */
+    public int size();
 }

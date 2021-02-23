@@ -2,44 +2,42 @@ package uk.ac.manchester.tornado.qsim.circuit;
 
 import uk.ac.manchester.tornado.qsim.circuit.operation.Operation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Step {
-    private final ArrayList<Operation> operations;
-    private final HashSet<Qubit> freeQubits;
+    private final HashMap<Integer, Operation> operations;
 
-    public Step(Qubit[] qubits) {
-        this.operations = new ArrayList<Operation>();
-        this.freeQubits = new HashSet<Qubit>(Arrays.asList(qubits));
+    public Step(int noQubits) {
+        this.operations = new HashMap<Integer, Operation>();
+        for (int qubit = 0; qubit < noQubits; qubit++)
+            this.operations.put(qubit, null);
     }
 
-    public List<Operation> getOperations() {
-        return this.operations;
+    public Operation getOperation(int qubit) {
+        return this.operations.get(qubit);
     }
+
+    public boolean isQubitFree(int qubit) { return this.operations.get(qubit) == null; }
 
     public boolean canAddOperation(Operation operation) {
-        return areFreeQubits(operation.involvedQubits());
+        // TODO: implement
+        return false;
     }
 
     public void addOperation(Operation operation) {
-        Qubit[] involvedQubits = operation.involvedQubits();
-
-        if (!areFreeQubits(involvedQubits))
-            throw new IllegalArgumentException("Operation '" + operation + "' cannot be added to this step - "
-                    + "acts on qubits that are already involved in different operation");
-
-        for (Qubit qubit : involvedQubits)
-            this.freeQubits.remove(qubit);
-        this.operations.add(operation);
+        // TODO: implement
     }
 
-    private boolean areFreeQubits(Qubit[] qubits) {
-        for (Qubit qubit : qubits)
-            if (!this.freeQubits.contains(qubit))
-                return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Step step = (Step) o;
+        return operations.equals(step.operations);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operations);
     }
 }

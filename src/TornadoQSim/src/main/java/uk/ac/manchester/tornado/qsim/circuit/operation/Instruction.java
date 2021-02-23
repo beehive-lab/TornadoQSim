@@ -1,6 +1,5 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
-import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.InstructionType;
 
 import java.util.Objects;
@@ -11,16 +10,14 @@ import java.util.Objects;
  */
 public class Instruction implements Operation {
     private final InstructionType type;
-    private final Qubit target;
+    private final int target;
 
     /**
      * Constructs a quantum instruction.
      * @param type type of the standard quantum instruction.
      * @param target qubit to which the standard quatum instruction applies.
      */
-    public Instruction(InstructionType type, Qubit target) {
-        if (target == null)
-            throw new IllegalArgumentException("Target qubit must be defined (not NULL).");
+    public Instruction(InstructionType type, int target) {
         this.type = type;
         this.target = target;
     }
@@ -35,19 +32,22 @@ public class Instruction implements Operation {
      * Gets the target qubit.
      * @return target qubit.
      */
-    public Qubit targetQubit() { return this.target; }
+    public int targetQubit() { return this.target; }
 
     @Override
-    public Qubit[] involvedQubits() {
-        return new Qubit[] { this.target };
+    public int[] involvedQubits() {
+        return new int[] { this.target };
     }
+
+    @Override
+    public int size() { return 1; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Instruction that = (Instruction) o;
-        return type == that.type && target.equals(that.target);
+        return target == that.target && type == that.type;
     }
 
     @Override

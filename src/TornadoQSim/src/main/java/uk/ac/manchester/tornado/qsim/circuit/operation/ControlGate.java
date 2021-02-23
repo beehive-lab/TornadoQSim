@@ -1,6 +1,5 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
-import uk.ac.manchester.tornado.qsim.circuit.Qubit;
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
 
 import java.util.Objects;
@@ -12,18 +11,16 @@ import java.util.Objects;
  */
 public class ControlGate implements Operation {
     private final GateType type;
-    private final Qubit control;
-    private final Qubit target;
+    private final int control;
+    private final int target;
 
     /**
      * Constructs a standard quantum controlled gate.
-     * @param type type of the standard quantum gate (controlled by control qubit).
+     * @param type type of the standard quantum gate (controlled by the control qubit).
      * @param control qubit that conditionally controls the standard quantum gate.
      * @param target qubit to which the standard quatum gate applies.
      */
-    protected ControlGate(GateType type, Qubit control, Qubit target) {
-        if (control == null || target == null)
-            throw new IllegalArgumentException("Both control and target qubits must be defined (not NULL).");
+    protected ControlGate(GateType type, int control, int target) {
         if (control == target)
             throw new IllegalArgumentException("Control and target qubits must act on different qubits.");
         this.type = type;
@@ -41,17 +38,26 @@ public class ControlGate implements Operation {
      * Gets the control qubit.
      * @return control qubit.
      */
-    public Qubit controlQubit() { return  this.control; }
+    public int controlQubit() { return  this.control; }
 
     /**
      * Gets the target qubit.
      * @return target qubit.
      */
-    public Qubit targetQubit() { return this.target; }
+    public int targetQubit() { return this.target; }
 
     @Override
-    public Qubit[] involvedQubits() {
-        return new Qubit[] { this.control, this.target };
+    public int[] involvedQubits() {
+        return new int[] { this.control, this.target };
+    }
+
+    /**
+     * {@inheritdoc}
+     * This includes the qubits between the control and target qubits.
+     */
+    @Override
+    public int size() {
+        return Math.abs(this.target - this.control) + 1;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class ControlGate implements Operation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ControlGate that = (ControlGate) o;
-        return type == that.type && control.equals(that.control) && target.equals(that.target);
+        return control == that.control && target == that.target && type == that.type;
     }
 
     @Override
