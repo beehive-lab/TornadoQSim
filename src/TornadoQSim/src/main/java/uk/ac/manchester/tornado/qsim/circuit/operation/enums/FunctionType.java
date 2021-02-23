@@ -6,6 +6,7 @@ package uk.ac.manchester.tornado.qsim.circuit.operation.enums;
  */
 public enum FunctionType {
     Custom,
+    Swap,
     Oracle,
     QFT,
 }
