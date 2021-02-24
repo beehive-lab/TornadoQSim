@@ -25,13 +25,13 @@ public class Complex {
      * Gets the real part of the complex number.
      * @return real part of the complex number
      */
-    public float real() { return this.real; }
+    public float real() { return real; }
 
     /**
      * Gets the imaginary part of the complex number.
      * @return imaginary part of the complex number
      */
-    public float imag() { return this.imag; }
+    public float imag() { return imag; }
 
     /**
      * Adds two complex numbers.

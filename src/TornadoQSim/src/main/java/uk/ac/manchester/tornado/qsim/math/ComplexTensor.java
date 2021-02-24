@@ -23,12 +23,12 @@ public class ComplexTensor {
         if (shape == null || shape.length < 1 || !allPositive(shape))
             throw new IllegalArgumentException("Invalid tensor shape provided.");
 
-        this.rank = shape.length == 1 && shape[0] == 1 ? 0 : shape.length;
-        this.size = calculateSize(shape);
+        rank = shape.length == 1 && shape[0] == 1 ? 0 : shape.length;
+        size = calculateSize(shape);
         this.shape = shape;
 
-        this.real = new float[this.size];
-        this.imag = new float[this.size];
+        real = new float[size];
+        imag = new float[size];
     }
 
     /**
@@ -39,13 +39,13 @@ public class ComplexTensor {
     public ComplexTensor(Complex[] data, int... shape) {
         this(shape);
 
-        if (data == null || data.length != this.size)
+        if (data == null || data.length != size)
             throw new IllegalArgumentException("Invalid tensor data provided.");
 
         int i = 0;
         for (Complex element : data) {
-            this.real[i] = element.real();
-            this.imag[i] = element.imag();
+            real[i] = element.real();
+            imag[i] = element.imag();
             i++;
         }
     }
@@ -58,42 +58,42 @@ public class ComplexTensor {
         if (original == null)
             throw new IllegalArgumentException("Invalid original tensor provided.");
 
-        this.rank = original.rank;
-        this.size = original.size;
-        this.shape = Arrays.copyOf(original.shape, original.shape.length);
-        this.real = Arrays.copyOf(original.real, original.real.length);
-        this.imag = Arrays.copyOf(original.imag, original.imag.length);
+        rank = original.rank;
+        size = original.size;
+        shape = Arrays.copyOf(original.shape, original.shape.length);
+        real = Arrays.copyOf(original.real, original.real.length);
+        imag = Arrays.copyOf(original.imag, original.imag.length);
     }
 
     /**
      * Gets a rank of this complex tensor (eg. rank 1 = vector, rank 2 = matrix, ...).
      * @return complex tensor rank.
      */
-    public int rank() { return this.rank; }
+    public int rank() { return rank; }
 
     /**
      * Gets a total size of this complex tensor (total number of complex data points).
      * @return total number of complex data points.
      */
-    public int size() { return this.size; }
+    public int size() { return size; }
 
     /**
      * Gets a shape (dimensions) of this complex tensor.
      * @return complex tensor shape.
      */
-    public int[] shape() { return this.shape; }
+    public int[] shape() { return shape; }
 
     /**
      * Gets all real parts of this complex tensor.
      * @return all real parts.
      */
-    public float[] getRawRealData() { return this.real; }
+    public float[] getRawRealData() { return real; }
 
     /**
      * Gets all imaginary parts of this complex tensor.
      * @return all imaginary parts.
      */
-    public float[] getRawImagData() { return this.imag; }
+    public float[] getRawImagData() { return imag; }
 
     /**
      * Retrieves a single indexed complex element from this complex tensor.
@@ -142,24 +142,24 @@ public class ComplexTensor {
     public String toString() {
         StringBuilder finalString = new StringBuilder();
         finalString.append("ComplexTensor {"
-                + " rank: " + this.rank
+                + " rank: " + rank
                 + ", shape: " + Arrays.toString(shape)
                 + ", data: [");
-        for (int i = 0; i < this.size; i++)
-            if (i == this.size - 1)
-                finalString.append(new Complex(this.real[i], this.imag[i]) + "] }");
+        for (int i = 0; i < size; i++)
+            if (i == size - 1)
+                finalString.append(new Complex(real[i], imag[i]) + "] }");
             else
-                finalString.append(new Complex(this.real[i], this.imag[i]) + ", ");
+                finalString.append(new Complex(real[i], imag[i]) + ", ");
         return finalString.toString();
     }
 
     private void checkIndexBounds(int... indicies) {
         if (!allPositiveOrZero(indicies))
             throw new IndexOutOfBoundsException("Index cannot be negative.");
-        if (indicies.length != this.shape.length)
+        if (indicies.length != shape.length)
             throw new IndexOutOfBoundsException("Number of supplied indicies does not correspond to the tensor rank.");
         for (int i = 0; i < indicies.length; i++)
-            if (indicies[i] >= this.shape[i])
+            if (indicies[i] >= shape[i])
                 throw  new IndexOutOfBoundsException("Supplied index does not fit the tensor shape.");
     }
 
@@ -173,7 +173,7 @@ public class ComplexTensor {
         for (int i = 0; i < indicies.length; i++) {
             int dimensionFactor = 1;
             for (int j = 0; j < (indicies.length - i - 1); j++)
-                dimensionFactor *= this.shape[j];
+                dimensionFactor *= shape[j];
             flatIndex += indicies[i] * dimensionFactor;
         }
         return flatIndex;
