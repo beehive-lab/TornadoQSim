@@ -12,8 +12,8 @@ public class ComplexTensor {
     private final int size;
     private final int[] shape;
 
-    private final double[] real;
-    private final double[] imag;
+    private final float[] real;
+    private final float[] imag;
 
     /**
      * Constructs an empty complex tensor of required shape.
@@ -27,8 +27,8 @@ public class ComplexTensor {
         this.size = calculateSize(shape);
         this.shape = shape;
 
-        this.real = new double[this.size];
-        this.imag = new double[this.size];
+        this.real = new float[this.size];
+        this.imag = new float[this.size];
     }
 
     /**
@@ -87,13 +87,13 @@ public class ComplexTensor {
      * Gets all real parts of this complex tensor.
      * @return all real parts.
      */
-    public double[] getRawRealData() { return this.real; }
+    public float[] getRawRealData() { return this.real; }
 
     /**
      * Gets all imaginary parts of this complex tensor.
      * @return all imaginary parts.
      */
-    public double[] getRawImagData() { return this.imag; }
+    public float[] getRawImagData() { return this.imag; }
 
     /**
      * Retrieves a single indexed complex element from this complex tensor.

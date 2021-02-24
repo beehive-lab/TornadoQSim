@@ -2,7 +2,6 @@ package uk.ac.manchester.tornado.qsim.math;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,8 +111,8 @@ public class ComplexTensorTest {
     public void testComplexTensorRawData() {
         Complex[] originalData = populateComplexArray(25);
         ComplexTensor tensor = new ComplexTensor(originalData, 5, 5);
-        assertTrue(Arrays.equals(getRealParts(originalData), tensor.getRawRealData()));
-        assertTrue(Arrays.equals(getImagParts(originalData), tensor.getRawImagData()));
+        assertArrayEquals(getRealParts(originalData), tensor.getRawRealData());
+        assertArrayEquals(getImagParts(originalData), tensor.getRawImagData());
     }
 
     @Test
@@ -211,15 +210,15 @@ public class ComplexTensorTest {
         return complexArray;
     }
 
-    private double[] getRealParts(Complex[] complexArray) {
-        double[] realParts = new double[complexArray.length];
+    private float[] getRealParts(Complex[] complexArray) {
+        float[] realParts = new float[complexArray.length];
         for (int i = 0; i < complexArray.length; i++)
             realParts[i] = complexArray[i].real();
         return realParts;
     }
 
-    private double[] getImagParts(Complex[] complexArray) {
-        double[] imagParts = new double[complexArray.length];
+    private float[] getImagParts(Complex[] complexArray) {
+        float[] imagParts = new float[complexArray.length];
         for (int i = 0; i < complexArray.length; i++)
             imagParts[i] = complexArray[i].imag();
         return imagParts;

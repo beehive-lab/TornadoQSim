@@ -8,15 +8,15 @@ import java.util.Objects;
  * @author Ales Kubicek (inspired by CS Princeton)
  */
 public class Complex {
-    private final double real;
-    private final double imag;
+    private final float real;
+    private final float imag;
 
     /**
      * Constructs a complex number from the supplied real and imaginary parts.
      * @param real real part
      * @param imag imaginary part
      */
-    public Complex(double real, double imag) {
+    public Complex(float real, float imag) {
         this.real = real;
         this.imag = imag;
     }
@@ -25,13 +25,13 @@ public class Complex {
      * Gets the real part of the complex number.
      * @return real part of the complex number
      */
-    public double real() { return this.real; }
+    public float real() { return this.real; }
 
     /**
      * Gets the imaginary part of the complex number.
      * @return imaginary part of the complex number
      */
-    public double imag() { return this.imag; }
+    public float imag() { return this.imag; }
 
     /**
      * Adds two complex numbers.
@@ -78,7 +78,7 @@ public class Complex {
      * @param alpha scalar that scales this.
      * @return scaled representation of this complex number.
      */
-    public Complex scale(double alpha) {
+    public Complex scale(float alpha) {
         return new Complex(alpha * real, alpha * imag);
     }
 
@@ -87,7 +87,7 @@ public class Complex {
      * @return reciprocal of this complex number
      */
     public Complex reciprocal() {
-        double scale = real * real + imag * imag;
+        float scale = real * real + imag * imag;
         return new Complex(real / scale, -imag / scale);
     }
 
@@ -103,8 +103,8 @@ public class Complex {
      * Calculates an absolute value (modulus) of this complex number.
      * @return absolute value of this complex number.
      */
-    public double abs() {
-        return  Math.hypot(real, imag);
+    public float abs() {
+        return (float)Math.hypot(real, imag);
     }
 
     @Override
