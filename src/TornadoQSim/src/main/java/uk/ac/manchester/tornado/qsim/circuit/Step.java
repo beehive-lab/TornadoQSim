@@ -20,9 +20,9 @@ public class Step {
     public Step(int noQubits) {
         if (noQubits < 1)
             throw new IllegalArgumentException("Number of qubits in a step must be greater than 0.");
-        this.qubitOperations = new HashMap<Integer, Operation>();
+        qubitOperations = new HashMap<>();
         for (int qubit = 0; qubit < noQubits; qubit++)
-            this.qubitOperations.put(qubit, null);
+            qubitOperations.put(qubit, null);
     }
 
     /**
@@ -33,7 +33,7 @@ public class Step {
     public Operation getOperation(int qubit) {
         if (!isValidQubit(qubit))
             throw new IllegalArgumentException("Invalid qubit supplied.");
-        return this.qubitOperations.get(qubit);
+        return qubitOperations.get(qubit);
     }
 
     /**
@@ -44,7 +44,7 @@ public class Step {
     public boolean isQubitFree(int qubit) {
         if (!isValidQubit(qubit))
             throw new IllegalArgumentException("Invalid qubit supplied.");
-        return this.qubitOperations.get(qubit) == null;
+        return qubitOperations.get(qubit) == null;
     }
 
     /**
@@ -89,5 +89,5 @@ public class Step {
         return Objects.hash(qubitOperations);
     }
 
-    private boolean isValidQubit(int qubit) { return qubit >= 0 && qubit < this.qubitOperations.size(); }
+    private boolean isValidQubit(int qubit) { return qubit >= 0 && qubit < qubitOperations.size(); }
 }
