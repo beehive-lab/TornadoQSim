@@ -28,17 +28,17 @@ public class Gate implements Operation {
      * Gets the type of the standard quantum gate.
      * @return gate type of the quantum gate.
      */
-    public GateType type() { return this.type; }
+    public GateType type() { return type; }
 
     /**
      * Gets the target qubit.
      * @return target qubit.
      */
-    public int targetQubit() { return this.target; }
+    public int targetQubit() { return target; }
 
     @Override
     public int[] involvedQubits() {
-        return new int[] { this.target };
+        return new int[] { target };
     }
 
     @Override

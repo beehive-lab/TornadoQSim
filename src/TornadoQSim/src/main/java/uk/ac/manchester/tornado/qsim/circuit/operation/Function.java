@@ -53,13 +53,13 @@ public class Function implements Operation {
      * Gets the type of the quantum function.
      * @return function type of the quantum function.
      */
-    public FunctionType type() { return this.type; }
+    public FunctionType type() { return type; }
 
     /**
      * Gets the name of the custom quantum function.
      * @return custom function name.
      */
-    public String name() { return this.name; }
+    public String name() { return name; }
 
     /**
      * Gets target qubits.
@@ -68,12 +68,12 @@ public class Function implements Operation {
     public int[] targetQubits() {
         int[] qubits = new int[size()];
         for (int i = 0; i < qubits.length; i++)
-            qubits[i] = this.fromQubit + i;
+            qubits[i] = fromQubit + i;
         return qubits;
     }
 
     @Override
-    public int size() { return (this.toQubit - this.fromQubit) + 1; }
+    public int size() { return (toQubit - fromQubit) + 1; }
 
     @Override
     public int[] involvedQubits() {

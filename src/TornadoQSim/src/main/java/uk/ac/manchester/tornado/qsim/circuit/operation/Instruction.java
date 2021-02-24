@@ -28,17 +28,17 @@ public class Instruction implements Operation {
      * Gets the type of the standard quantum instruction.
      * @return instruction type.
      */
-    public InstructionType type() { return this.type; }
+    public InstructionType type() { return type; }
 
     /**
      * Gets the target qubit.
      * @return target qubit.
      */
-    public int targetQubit() { return this.target; }
+    public int targetQubit() { return target; }
 
     @Override
     public int[] involvedQubits() {
-        return new int[] { this.target };
+        return new int[] { target };
     }
 
     @Override

@@ -18,8 +18,8 @@ public class OperationDataProvider {
     private static OperationDataProvider instance;
 
     private OperationDataProvider() {
-        customFunctionData = new HashMap<String, ComplexTensor>();
-        gateData = new HashMap<GateType, ComplexTensor>();
+        customFunctionData = new HashMap<>();
+        gateData = new HashMap<>();
     }
 
     /**

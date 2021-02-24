@@ -34,24 +34,24 @@ public class ControlGate implements Operation {
      * Gets the type of the standard quantum gate.
      * @return gate type of the quantum gate.
      */
-    public GateType type() { return this.type; }
+    public GateType type() { return type; }
 
     /**
      * Gets the control qubit.
      * @return control qubit.
      */
-    public int controlQubit() { return  this.control; }
+    public int controlQubit() { return  control; }
 
     /**
      * Gets the target qubit.
      * @return target qubit.
      */
-    public int targetQubit() { return this.target; }
+    public int targetQubit() { return target; }
 
     @Override
     public int[] involvedQubits() {
         int[] qubits = new int[size()];
-        int fromQubit = this.control < this.target ? this.control : this.target;
+        int fromQubit = control < target ? control : target;
         for (int i = 0; i < qubits.length; i++)
             qubits[i] = fromQubit + i;
         return qubits;
@@ -63,7 +63,7 @@ public class ControlGate implements Operation {
      */
     @Override
     public int size() {
-        return Math.abs(this.target - this.control) + 1;
+        return Math.abs(target - control) + 1;
     }
 
     @Override
