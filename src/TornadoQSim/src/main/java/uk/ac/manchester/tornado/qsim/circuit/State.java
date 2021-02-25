@@ -1,5 +1,6 @@
 package uk.ac.manchester.tornado.qsim.circuit;
 
+import uk.ac.manchester.tornado.qsim.circuit.utils.StateConverter;
 import uk.ac.manchester.tornado.qsim.math.Complex;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 
@@ -149,6 +150,19 @@ public class State {
     @Override
     public int hashCode() {
         return Objects.hash(stateVector, noQubits);
+    }
+
+    @Override
+    public String toString() {
+        if (noQubits > 6)
+            return "Not supported for states with more than 6 qubits.";
+        StringBuilder result = new StringBuilder();
+        for (int state = 0; state < stateVector.size(); state++) {
+            result.append(StateConverter.stateToBitstring(state, noQubits));
+            result.append(String.format("  %.2f", getProbabilityForState(state)));
+            result.append("  (" + stateVector.getElement(state) + ")\n");
+        }
+        return result.toString();
     }
 
     private boolean isBitSet(int number, int bit) {
