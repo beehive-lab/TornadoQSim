@@ -35,6 +35,9 @@ public class OperationDataProviderTest {
 
         gate = new ComplexTensor(gateData(GateType.T), 2,2);
         assertEquals(gate, dataProvider.getData(GateType.T));
+
+        gate = new ComplexTensor(gateData(GateType.I), 2,2);
+        assertEquals(gate, dataProvider.getData(GateType.I));
     }
 
     @Test
@@ -111,6 +114,13 @@ public class OperationDataProviderTest {
                         new Complex(0,0),
                         new Complex(0,0),
                         new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2)))
+                };
+            case I:
+                return new Complex[] {
+                        new Complex(1,0),
+                        new Complex(0,0),
+                        new Complex(0,0),
+                        new Complex(1,0)
                 };
             default:
                 return new Complex[0];

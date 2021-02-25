@@ -110,6 +110,11 @@ public class OperationDataProvider {
                 dataEntry.insertElement(new Complex(1,0), 0,0);
                 dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2))), 1,1);
                 break;
+            case I:
+                dataEntry.insertElement(new Complex(1,0), 0,0);
+                dataEntry.insertElement(new Complex(1,0), 1,1);
+                break;
+
         }
         gateData.put(type, dataEntry);
         return dataEntry;
