@@ -166,15 +166,16 @@ public class ComplexTensor {
     private int getFlatIndex(int... indicies) {
         if (indicies == null)
             return 0;
-        // a * D1*D2*D3*Dn + b * D1*D2*D3*Dn-1 + ... + y * D1 + z
-        // where: (a,b,...,y,z)  ... indicies of the element to be accessed
-        //        D1,D2,D3,Dn    ... dimensions of the tensor
+        // (i,j,...,y,z)        index to be accessed in the flat array (indicies[0] = i)
+        // (d0,d1,d2,...,dn)    shape of the tensor (shape[0] = d0)
+        // Formula:             (i * d1*d2*...*dn) + (j * d2*...*dn) + ...  + (y * dn) + z
+        // Example:             access (2,0) of a 3x2 matrix
+        //                      => (i=2, j=0), (d0=3, d1=2) => (i * d1) + j = 2*2 + 0 = 4
         int flatIndex = 0;
-        for (int i = 0; i < indicies.length; i++) {
-            int dimensionFactor = 1;
-            for (int j = 0; j < (indicies.length - i - 1); j++)
-                dimensionFactor *= shape[j];
+        int dimensionFactor = 1;
+        for (int i = indicies.length - 1; i >= 0; i--) {
             flatIndex += indicies[i] * dimensionFactor;
+            dimensionFactor *= shape[i];
         }
         return flatIndex;
     }
