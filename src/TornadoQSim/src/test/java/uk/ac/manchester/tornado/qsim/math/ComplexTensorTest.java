@@ -128,30 +128,31 @@ public class ComplexTensorTest {
         assertEquals(newElement, tensor.getElement(0));
 
         // Matrix (rank 2)
-        tensor = new ComplexTensor(2,2);
-        assertEquals(zero, tensor.getElement(0,0));
-        assertEquals(zero, tensor.getElement(0,1));
-        assertEquals(zero, tensor.getElement(1,0));
-        assertEquals(zero, tensor.getElement(1,1));
+        Complex[] data = populateComplexArray(6);
+        tensor = new ComplexTensor(data, 2,3);
+        assertEquals(data[0], tensor.getElement(0,0));
+        assertEquals(data[1], tensor.getElement(0,1));
+        assertEquals(data[2], tensor.getElement(0,2));
+        assertEquals(data[3], tensor.getElement(1,0));
+        assertEquals(data[4], tensor.getElement(1,1));
+        assertEquals(data[5], tensor.getElement(1,2));
 
-        tensor.insertElement(newElement, 0,1);
-        tensor.insertElement(newElement, 1,0);
-        assertEquals(zero, tensor.getElement(0,0));
-        assertEquals(newElement, tensor.getElement(0,1));
-        assertEquals(newElement, tensor.getElement(1,0));
-        assertEquals(zero, tensor.getElement(1,1));
+        data = populateComplexArray(6);
+        tensor = new ComplexTensor(data, 3,2);
+        assertEquals(data[0], tensor.getElement(0,0));
+        assertEquals(data[1], tensor.getElement(0,1));
+        assertEquals(data[2], tensor.getElement(1,0));
+        assertEquals(data[3], tensor.getElement(1,1));
+        assertEquals(data[4], tensor.getElement(2,0));
+        assertEquals(data[5], tensor.getElement(2,1));
+
+        tensor.insertElement(newElement, 2,0);
+        assertEquals(data[3], tensor.getElement(1,1));
+        assertEquals(newElement, tensor.getElement(2,0));
+        assertEquals(data[5], tensor.getElement(2,1));
 
         // Matrix (rank 3)
-        Complex[] data = new Complex[] {
-                new Complex(0, 0),
-                new Complex(1, -7),
-                new Complex(2, -6),
-                new Complex(3, -5),
-                new Complex(4, -4),
-                new Complex(5, -3),
-                new Complex(6, -2),
-                new Complex(7, -1),
-        };
+        data = populateComplexArray(8);
         tensor = new ComplexTensor(data, 2,2,2);
         assertEquals(data[0], tensor.getElement(0,0,0));
         assertEquals(data[1], tensor.getElement(0,0,1));
