@@ -1,6 +1,7 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
+import uk.ac.manchester.tornado.qsim.circuit.operation.enums.OperationType;
 
 import java.util.Objects;
 
@@ -65,6 +66,9 @@ public class ControlGate implements Operation {
     public int size() {
         return Math.abs(target - control) + 1;
     }
+
+    @Override
+    public OperationType operationType() { return OperationType.ControlGate; }
 
     @Override
     public boolean equals(Object o) {

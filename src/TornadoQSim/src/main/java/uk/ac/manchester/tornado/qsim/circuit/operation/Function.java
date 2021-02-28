@@ -1,6 +1,7 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.FunctionType;
+import uk.ac.manchester.tornado.qsim.circuit.operation.enums.OperationType;
 
 import java.util.Objects;
 
@@ -78,6 +79,11 @@ public class Function implements Operation {
     @Override
     public int[] involvedQubits() {
         return targetQubits();
+    }
+
+    @Override
+    public OperationType operationType() {
+        return type == FunctionType.Custom ? OperationType.CustomFunction : OperationType.Funciton;
     }
 
     @Override

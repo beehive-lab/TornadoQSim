@@ -1,5 +1,7 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
+import uk.ac.manchester.tornado.qsim.circuit.operation.enums.OperationType;
+
 /**
  * Reperesents any operation that can be applied to a quantum circuit at some step.
  * @author Ales Kubicek
@@ -16,4 +18,10 @@ public interface Operation {
      * @return operation size.
      */
     public int size();
+
+    /**
+     * Gets the operation type.
+     * @return operation type.
+     */
+    public OperationType operationType();
 }

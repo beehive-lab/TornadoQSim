@@ -1,6 +1,7 @@
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.InstructionType;
+import uk.ac.manchester.tornado.qsim.circuit.operation.enums.OperationType;
 
 import java.util.Objects;
 
@@ -43,6 +44,9 @@ public class Instruction implements Operation {
 
     @Override
     public int size() { return 1; }
+
+    @Override
+    public OperationType operationType() { return OperationType.Instruction; }
 
     @Override
     public boolean equals(Object o) {
