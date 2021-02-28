@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class Step {
     private final HashMap<Integer, Operation> qubitOperations;
+    private int operationCount;
 
     /**
      * Constructs a quantum circuit step with the supplied number of qubits.
@@ -24,6 +25,12 @@ public class Step {
         for (int qubit = 0; qubit < noQubits; qubit++)
             qubitOperations.put(qubit, null);
     }
+
+    /**
+     * Gets the number of operations present in this quantum circuit step.
+     * @return total number of operations in this step.
+     */
+    public int getOperationCount() { return operationCount; }
 
     /**
      * Gets an operation that occupies the queried qubit. NULL is returned if no operation occupies the queried qubit.
@@ -74,6 +81,7 @@ public class Step {
             throw new IllegalArgumentException("Operation cannot be added to this step (qubits already occupied).");
         for (int qubit : operation.involvedQubits())
             qubitOperations.put(qubit, operation);
+        operationCount++;
     }
 
     @Override
