@@ -39,10 +39,10 @@ public class OperationDataProvider {
      * @param data rank 2 complex tensor.
      */
     public void registerFunctionData(String functionName, ComplexTensor data) {
-        if (functionName == null || functionName.equals(""))
+        if (!isFunctionNameValid(functionName))
             throw new IllegalArgumentException("Invalid function name supplied.");
-        if (data == null || data.rank() != 2 || data.size() < 4)
-            throw new IllegalArgumentException("Invalid data supplied (check definition, rank, size).");
+        if (!isFunctionDataValid(data))
+            throw new IllegalArgumentException("Invalid funciton data supplied (check definition, rank, size).");
         customFunctionData.put(functionName, data);
     }
 
@@ -52,7 +52,7 @@ public class OperationDataProvider {
      * @return true, if data for the supplied function name is registered.
      */
     public boolean isFunctionDataRegistered(String functionName) {
-        if (functionName == null || functionName.equals(""))
+        if (!isFunctionNameValid(functionName))
             throw new IllegalArgumentException("Invalid function name supplied.");
         return customFunctionData.containsKey(functionName);
     }
@@ -63,7 +63,7 @@ public class OperationDataProvider {
      * @return function data.
      */
     public ComplexTensor getData(String functionName) {
-        if (functionName == null || functionName.equals(""))
+        if (!isFunctionNameValid(functionName))
             throw new IllegalArgumentException("Invalid function name supplied.");
         if (!customFunctionData.containsKey(functionName))
             throw new IllegalArgumentException("Data for this custom function were not registered.");
@@ -118,5 +118,13 @@ public class OperationDataProvider {
         }
         gateData.put(type, dataEntry);
         return dataEntry;
+    }
+
+    private boolean isFunctionNameValid(String functionName) {
+        return functionName != null && !functionName.equals("");
+    }
+
+    private boolean isFunctionDataValid(ComplexTensor data) {
+        return data != null && data.rank() == 2 && data.size() >= 4 && data.shape()[0] == data.shape()[1];
     }
 }
