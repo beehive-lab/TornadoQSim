@@ -49,6 +49,8 @@ public class StepTest {
         for (Operation operation : operations)
             assertEquals(false, step.canAddOperation(operation));
 
+        assertEquals(4, step.getOperationCount());
+
         assertEquals(operations[0], step.getOperation(0));
         assertEquals(operations[1], step.getOperation(1));
         assertEquals(operations[1], step.getOperation(2));
