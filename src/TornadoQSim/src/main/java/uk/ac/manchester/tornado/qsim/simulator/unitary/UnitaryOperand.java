@@ -98,4 +98,59 @@ public class UnitaryOperand {
         }
     }
 
+    /**
+     * Builds control gate unitary matrix that spans across multiple qubits. It is assumed that gate data
+     * supplied is 4x4 unitary matrix, control/target qubit is 0 and the other control/target qubit is the span
+     *  (eg. control = 0, target = 3 OR control = 3, target = 0). Result matrix is of size 2^span x 2^ span.
+     * @param realGate flattened real parts of the complex unitary operation matrix.
+     * @param imagGate flattened imaginary parts of the complex unitary operation matrix.
+     * @param control control qubit (0 or span).
+     * @param target target qubit (0 or span).
+     * @param realResult flattened real parts of the complex unitary result matrix.
+     * @param imagResult flattened imaginary parts of the complex unitary result matrix.
+     * @param rowsResult number of rows in the complex unitary result matrix.
+     */
+    protected static void buildControlGate(float[] realGate, float[] imagGate, int control, int target,
+                                           float[] realResult, float[] imagResult, int rowsResult) {
+        // Note: rowsResult = colsResult
+        for (@Parallel int qRow = 0; qRow < rowsResult; qRow++) {
+            // Control bit is 1 (apply gate)
+            if ((qRow & (1 << control)) != 0) {
+                // Target bit is 1 (apply gate[10] and gate[11])
+                if ((qRow & (1 << target)) != 0) {
+                    int target0 = qRow & ~(1 << target);
+                    int target1 = qRow;
+
+                    int index10 = (qRow * rowsResult) + target0;
+                    int index11 = (qRow * rowsResult) + target1;
+
+                    realResult[index10] = realGate[2];
+                    imagResult[index10] = imagGate[2];
+
+                    realResult[index11] = realGate[3];
+                    imagResult[index11] = imagGate[3];
+                }
+                // Target bit is 0 (apply gate[00] and gate[01])
+                else {
+                    int target0 = qRow;
+                    int target1 = qRow | (1 << target);
+
+                    int index00 = (qRow * rowsResult) + target0;
+                    int index01 = (qRow * rowsResult) + target1;
+
+                    realResult[index00] = realGate[0];
+                    imagResult[index00] = imagGate[0];
+
+                    realResult[index01] = realGate[1];
+                    imagResult[index01] = imagGate[1];
+                }
+            }
+            // Control bit is 0 (apply identity)
+            else {
+                int indexResult = (qRow * rowsResult) + qRow;
+                realResult[indexResult] = 1;
+            }
+        }
+    }
+
 }
