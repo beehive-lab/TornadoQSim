@@ -5,6 +5,7 @@ import uk.ac.manchester.tornado.qsim.math.Complex;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UnitaryOperandTest {
 
@@ -437,6 +438,68 @@ public class UnitaryOperandTest {
         assertArrayEquals(expected.getRawRealData(), matrixC.getRawRealData());
     }
 
+    @Test
+    public void testBuildControlGate() {
+        ComplexTensor result;
+        ComplexTensor gate = new ComplexTensor(2,2);
+        gate.insertElement(new Complex(-2,5),0,0);
+        gate.insertElement(new Complex(3,4),0,1);
+        gate.insertElement(new Complex(5,-3),1,0);
+        gate.insertElement(new Complex(4,5),1,1);
+
+        result = new ComplexTensor(4,4);
+        performBuildControlGate(gate, 0, 1, result);
+
+        assertEquals(new Complex(1,0), result.getElement(0,0));
+        assertEquals(new Complex(0,0), result.getElement(0,1));
+        assertEquals(new Complex(0,0), result.getElement(0,2));
+        assertEquals(new Complex(0,0), result.getElement(0,3));
+        assertEquals(new Complex(0,0), result.getElement(1,0));
+        assertEquals(new Complex(-2,5), result.getElement(1,1));
+        assertEquals(new Complex(0,0), result.getElement(1,2));
+        assertEquals(new Complex(3,4), result.getElement(1,3));
+        assertEquals(new Complex(0,0), result.getElement(2,0));
+        assertEquals(new Complex(0,0), result.getElement(2,1));
+        assertEquals(new Complex(1,0), result.getElement(2,2));
+        assertEquals(new Complex(0,0), result.getElement(2,3));
+        assertEquals(new Complex(0,0), result.getElement(3,0));
+        assertEquals(new Complex(5,-3), result.getElement(3,1));
+        assertEquals(new Complex(0,0), result.getElement(3,2));
+        assertEquals(new Complex(4,5), result.getElement(3,3));
+
+        result = new ComplexTensor(4,4);
+        performBuildControlGate(gate, 1, 0, result);
+
+        assertEquals(new Complex(1,0), result.getElement(0,0));
+        assertEquals(new Complex(0,0), result.getElement(0,1));
+        assertEquals(new Complex(0,0), result.getElement(0,2));
+        assertEquals(new Complex(0,0), result.getElement(0,3));
+        assertEquals(new Complex(0,0), result.getElement(1,0));
+        assertEquals(new Complex(1,0), result.getElement(1,1));
+        assertEquals(new Complex(0,0), result.getElement(1,2));
+        assertEquals(new Complex(0,0), result.getElement(1,3));
+        assertEquals(new Complex(0,0), result.getElement(2,0));
+        assertEquals(new Complex(0,0), result.getElement(2,1));
+        assertEquals(new Complex(-2,5), result.getElement(2,2));
+        assertEquals(new Complex(3,4), result.getElement(2,3));
+        assertEquals(new Complex(0,0), result.getElement(3,0));
+        assertEquals(new Complex(0,0), result.getElement(3,1));
+        assertEquals(new Complex(5,-3), result.getElement(3,2));
+        assertEquals(new Complex(4,5), result.getElement(3,3));
+
+        result = new ComplexTensor(8,8);
+        performBuildControlGate(gate, 2, 0, result);
+
+        assertEquals(new Complex(-2,5), result.getElement(4,4));
+        assertEquals(new Complex(3,4), result.getElement(4,5));
+        assertEquals(new Complex(5,-3), result.getElement(5,4));
+        assertEquals(new Complex(4,5), result.getElement(5,5));
+        assertEquals(new Complex(-2,5), result.getElement(6,6));
+        assertEquals(new Complex(3,4), result.getElement(6,7));
+        assertEquals(new Complex(5,-3), result.getElement(7,6));
+        assertEquals(new Complex(4,5), result.getElement(7,7));
+    }
+
     private void performMatrixProduct(ComplexTensor matrixA, ComplexTensor matrixB, ComplexTensor matrixC) {
         UnitaryOperand.matrixProduct(matrixA.getRawRealData(), matrixA.getRawImagData(), matrixA.shape()[0],
                 matrixA.shape()[1], matrixB.getRawRealData(), matrixB.getRawImagData(), matrixB.shape()[1],
@@ -453,5 +516,10 @@ public class UnitaryOperandTest {
         UnitaryOperand.kroneckerProduct(matrixA.getRawRealData(), matrixA.getRawImagData(), matrixA.shape()[0],
                 matrixA.shape()[1], matrixB.getRawRealData(), matrixB.getRawImagData(), matrixB.shape()[0],
                 matrixB.shape()[1], matrixC.getRawRealData(), matrixC.getRawImagData());
+    }
+
+    private void performBuildControlGate(ComplexTensor gate, int control, int target, ComplexTensor result) {
+        UnitaryOperand.buildControlGate(gate.getRawRealData(), gate.getRawImagData(), control, target,
+                result.getRawRealData(), result.getRawImagData(), result.shape()[0]);
     }
 }
