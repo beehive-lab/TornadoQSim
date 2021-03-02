@@ -102,6 +102,13 @@ public class Circuit {
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
+    public void CNOT(int controlQubit, int targetQubit) { addControlGate(GateType.X, controlQubit, targetQubit); }
+
+    /**
+     * Applies controlled X gate to the supplied control and target qubits.
+     * @param controlQubit control qubit for this controlled gate.
+     * @param targetQubit target qubit for this controlled gate.
+     */
     public void CX(int controlQubit, int targetQubit) { addControlGate(GateType.X, controlQubit, targetQubit); }
 
     /**
