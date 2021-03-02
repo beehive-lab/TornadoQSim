@@ -6,7 +6,7 @@ import uk.ac.manchester.tornado.api.annotations.Parallel;
  * Provides operands used in the unitary simulator that can be accelerated with TornadoVM.
  * @author AlesKubicek
  */
-public class UnitaryOperand {
+class UnitaryOperand {
 
     /**
      * Performs a complex matrix multiplication on the supplied complex matrices (decomposed to primitive type arrays).
