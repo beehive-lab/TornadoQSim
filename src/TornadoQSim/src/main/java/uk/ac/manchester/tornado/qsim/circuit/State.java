@@ -14,7 +14,7 @@ import java.util.Random;
  * @author Ales Kubicek
  */
 public class State {
-    private final ComplexTensor stateVector;
+    private ComplexTensor stateVector;
     private final int noQubits;
     private final Random random;
 
@@ -37,7 +37,7 @@ public class State {
      */
     public State(ComplexTensor initialStateVector) {
         if (!isValidInitialStateVector(initialStateVector))
-            throw new IllegalArgumentException("Invalid supplied state vector (NULL / not a vector / size).");
+            throw new IllegalArgumentException("Invalid state vector supplied (NULL / not a vector / size).");
         stateVector = initialStateVector;
         noQubits = getQubitCount(initialStateVector.size());
         random = new Random();
@@ -56,6 +56,14 @@ public class State {
      * @return full state vector.
      */
     public ComplexTensor getStateVector() { return stateVector; }
+
+    public void setStateVector(ComplexTensor stateVector) {
+        if (!isValidUpdatedStateVector(stateVector))
+            throw new IllegalArgumentException("Invalid state vector supplied (NULL / not a vector / size).");
+        this.stateVector = stateVector;
+        if (!isNormalized())
+            throw new IllegalArgumentException("Supplied state vector is not normalized.");
+    }
 
     /**
      * Gets the size (number of amplitudes) of the state vector.
@@ -193,5 +201,11 @@ public class State {
                 && vector.rank() == 1
                 && vector.size() >= 2
                 && (vector.size() & (vector.size() - 1)) == 0;
+    }
+
+    private boolean isValidUpdatedStateVector(ComplexTensor vector) {
+        return vector != null
+                && vector.rank() == stateVector.rank()
+                && vector.size() == stateVector.size();
     }
 }

@@ -79,6 +79,26 @@ public class StateTest {
     }
 
     @Test
+    public void testStateVectorUpdate() {
+        State qState = new State(getNormalizedVector(16));
+
+        ComplexTensor valid = new ComplexTensor(16);
+        valid.insertElement(HALF,0);
+        valid.insertElement(HALF,1);
+
+        qState.setStateVector(valid);
+        assertEquals(valid, qState.getStateVector());
+
+        ComplexTensor invalid = null;
+        ComplexTensor normalizedInvalid = getNormalizedVector(5);
+        ComplexTensor notNormalized = new ComplexTensor(4);
+
+        assertThrows(IllegalArgumentException.class, () -> qState.setStateVector(invalid));
+        assertThrows(IllegalArgumentException.class, () -> qState.setStateVector(normalizedInvalid));
+        assertThrows(IllegalArgumentException.class, () -> qState.setStateVector(notNormalized));
+    }
+
+    @Test
     public void testStateQubitQueries() {
         State qState = new State(3);
 
