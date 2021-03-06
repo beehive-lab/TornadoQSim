@@ -54,7 +54,7 @@ class UnitaryOperand {
                                               float[] realB, float[] imagB,
                                               float[] realC, float[] imagC) {
         for (@Parallel int i = 0; i < rowsA; i++) {
-            for (@Parallel int j = 0; j < colsA; j++) {
+            for (int j = 0; j < colsA; j++) {
                 int indexA = (i * colsA) + j;
                 int indexB = j;
                 int indexC = i;
