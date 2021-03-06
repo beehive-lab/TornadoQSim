@@ -20,7 +20,7 @@ public class ComplexTensor {
      * @param shape shape (dimensions) of the created tensor.
      */
     public ComplexTensor(int... shape) {
-        if (shape == null || shape.length < 1 || !allPositive(shape))
+        if (!isValidShape(shape))
             throw new IllegalArgumentException("Invalid tensor shape provided.");
 
         rank = shape.length == 1 && shape[0] == 1 ? 0 : shape.length;
@@ -48,6 +48,27 @@ public class ComplexTensor {
             imag[i] = element.imag();
             i++;
         }
+    }
+
+    /**
+     * Constructs a complex tensor of required shape filled with supplied complex data (splitted).
+     * @param realData real complex data.
+     * @param imagData imaginary complex data.
+     * @param shape shape (dimensions) of the created tensor.
+     */
+    public ComplexTensor(float[] realData, float[] imagData, int... shape) {
+        if (!isValidShape(shape))
+            throw new IllegalArgumentException("Invalid tensor shape provided.");
+
+        rank = shape.length == 1 && shape[0] == 1 ? 0 : shape.length;
+        size = calculateSize(shape);
+        this.shape = shape;
+
+        if (realData == null || imagData == null || realData.length != imagData.length || realData.length != size)
+            throw new IllegalArgumentException("Invalid tensor data provided.");
+
+        real = realData;
+        imag = imagData;
     }
 
     /**
@@ -200,4 +221,9 @@ public class ComplexTensor {
                 return false;
         return true;
     }
+
+    private boolean isValidShape(int[] shape) {
+        return shape != null && shape.length > 0 && allPositive(shape);
+    }
+
 }

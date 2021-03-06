@@ -96,6 +96,46 @@ public class ComplexTensorTest {
     }
 
     @Test
+    public void testComplexTensorDefinitionDataSplitted() {
+        // Scalar (rank 0)
+        ComplexTensor tensor = new ComplexTensor(populateFloatArray(1), populateFloatArray(1), 1);
+        assertEquals(0, tensor.rank());
+        assertEquals(1, tensor.size());
+        assertEquals(1, tensor.shape().length);
+        assertEquals(1, tensor.shape()[0]);
+
+        // Matrix (rank 2)
+        tensor = new ComplexTensor(populateFloatArray(7200), populateFloatArray(7200), 40,180);
+        assertEquals(2, tensor.rank());
+        assertEquals(7200, tensor.size());
+        assertEquals(2, tensor.shape().length);
+        assertEquals(40, tensor.shape()[0]);
+        assertEquals(180, tensor.shape()[1]);
+
+        // Tensor (rank 6)
+        tensor = new ComplexTensor(populateFloatArray(5040), populateFloatArray(5040), 2,3,4,5,6,7);
+        assertEquals(6, tensor.rank());
+        assertEquals(5040, tensor.size());
+        assertEquals(6, tensor.shape().length);
+        assertEquals(2, tensor.shape()[0]);
+        assertEquals(3, tensor.shape()[1]);
+        assertEquals(4, tensor.shape()[2]);
+        assertEquals(5, tensor.shape()[3]);
+        assertEquals(6, tensor.shape()[4]);
+        assertEquals(7, tensor.shape()[5]);
+
+        // Invalid definition
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ComplexTensor(null, populateFloatArray(4), 2,2));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ComplexTensor(populateFloatArray(4), null, 2,2));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ComplexTensor(populateFloatArray(2), populateFloatArray(2), 2,2));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ComplexTensor(populateFloatArray(50), populateFloatArray(50), 2,2));
+    }
+
+    @Test
     public void testComplexTensorDefinitionClone() {
         // Tensor (rank 6)
         ComplexTensor original = new ComplexTensor(populateComplexArray(5040), 2,3,4,5,6,7);
@@ -223,6 +263,14 @@ public class ComplexTensorTest {
         for (int i = 0; i < complexArray.length; i++)
             imagParts[i] = complexArray[i].imag();
         return imagParts;
+    }
+
+    private float[] populateFloatArray(int length) {
+        Random random = new Random();
+        float[] array = new float[length];
+        for (int i = 0; i < length; i++)
+            array[i] = random.nextInt(50);
+        return array;
     }
 
 }
