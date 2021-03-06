@@ -17,10 +17,6 @@ import java.util.List;
 class UnitaryDataProvider {
     final boolean accelerated;
 
-    private TaskSchedule taskSchedule;
-    private float[] gR, gI, rR, rI;
-    private int c, t, rSize;
-
     /**
      * Constructs unitary data provider.
      * @param accelerated flag to switch on / off acceleration (TornadoVM).
@@ -28,10 +24,6 @@ class UnitaryDataProvider {
     protected UnitaryDataProvider(boolean accelerated) {
         // Note: accelerated flag provided for evaluation purposes
         this.accelerated = accelerated;
-        if (accelerated)
-            taskSchedule = new TaskSchedule("sControlGate")
-                    .task("tBuildControlGate", UnitaryOperand::buildControlGate, gR, gI, c, t, rR, rI, rSize)
-                    .streamOut(rR, rI);
     }
 
     /**
@@ -115,14 +107,10 @@ class UnitaryDataProvider {
 
     private void buildControlGate(float[] gR, float[] gI, int c, int t, float[] rR, float[] rI, int rSize) {
         if (accelerated) {
-            this.gR = gR;
-            this.gI = gI;
-            this.c = c;
-            this.t = t;
-            this.rR = rR;
-            this.rI = rI;
-            this.rSize = rSize;
-            taskSchedule.execute();
+            new TaskSchedule("sControlGate")
+                    .task("tBuildControlGate", UnitaryOperand::buildControlGate, gR, gI, c, t, rR, rI, rSize)
+                    .streamOut(rR, rI)
+                    .execute();
         }
         else {
             UnitaryOperand.buildControlGate(gR, gI, c, t, rR, rI, rSize);
