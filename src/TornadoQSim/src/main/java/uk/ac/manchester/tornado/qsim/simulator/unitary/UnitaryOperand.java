@@ -27,6 +27,8 @@ class UnitaryOperand {
         for (@Parallel int i = 0; i < rowsA; i++) {
             for (@Parallel int j = 0; j < colsB; j++) {
                 int indexC = (i * rowsA) + j;
+                realC[indexC] = 0;
+                imagC[indexC] = 0;
                 // Note: rowsB = colsA
                 for (int k = 0; k < colsA; k++) {
                     int indexA = (i * colsA) + k;
@@ -54,10 +56,12 @@ class UnitaryOperand {
                                               float[] realB, float[] imagB,
                                               float[] realC, float[] imagC) {
         for (@Parallel int i = 0; i < rowsA; i++) {
+            int indexC = i;
+            realC[indexC] = 0;
+            imagC[indexC] = 0;
             for (int j = 0; j < colsA; j++) {
                 int indexA = (i * colsA) + j;
                 int indexB = j;
-                int indexC = i;
                 realC[indexC] += (realA[indexA] * realB[indexB]) - (imagA[indexA] * imagB[indexB]);
                 imagC[indexC] += (realA[indexA] * imagB[indexB]) + (imagA[indexA] * realB[indexB]);
             }
