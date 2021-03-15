@@ -13,13 +13,21 @@ import java.util.ListIterator;
 public class UnitarySimulatorAccelerated implements Simulator {
     private final UnitaryDataProvider dataProvider;
 
+    private TaskSchedule stepMulSchedule, stepVectorSchedule;
+
+    private float[] stepAReal, stepAImag, stepBReal, stepBImag, stepResultReal, stepResultImag;
+    private State finalState;
+    private final int unitaryDimension, noQubits;
+
     /**
      * Constructs a unitary matrix simulator.
      */
-    public UnitarySimulatorAccelerated() {
+    public UnitarySimulatorAccelerated(int noQubits) {
         dataProvider = new UnitaryDataProvider(false);
+        this.noQubits = noQubits;
+        unitaryDimension = (int)Math.pow(2, noQubits);
+        prepareTaskSchedules();
     }
-
 
     @Override
     public State simulateFullState(Circuit circuit) {
@@ -29,117 +37,105 @@ public class UnitarySimulatorAccelerated implements Simulator {
         List<Step> steps = circuit.getSteps();
         ListIterator<Step> iterator = steps.listIterator(steps.size());
 
-        ComplexTensor unitaryA, unitaryB;
-        int scheduleId = 0;
-
-        unitaryA = prepareStepUnitary(scheduleId, circuit.qubitCount(), iterator.previous());
+        prepareStepUnitary(circuit.qubitCount(), iterator.previous(), stepResultReal, stepResultImag);
         while (iterator.hasPrevious()) {
-            scheduleId++;
-            unitaryB = prepareStepUnitary(scheduleId, circuit.qubitCount(), iterator.previous());
-            unitaryA = matrixMultiplication(scheduleId, unitaryA, unitaryB);
+            prepareStepUnitary(circuit.qubitCount(), iterator.previous(), stepBReal, stepBImag);
+            matrixMultiplication();
         }
 
-        State resultState = new State(circuit.qubitCount());
-        resultState.setStateVector(matrixVectorMultiplication(unitaryA, resultState.getStateVector()));
-
-        return resultState;
+        stepVectorSchedule.execute();
+        return finalState;
     }
 
     @Override
     public int simulateAndCollapse(Circuit circuit) { return simulateFullState(circuit).collapse(); }
 
-    private ComplexTensor prepareStepUnitary(int scheduleId, int noQubits, Step step) {
+    private void prepareTaskSchedules() {
+        int unitarySize = unitaryDimension * unitaryDimension;
+
+        // Complex matrix multiplication
+        stepAReal = new float[unitarySize];
+        stepAImag = new float[unitarySize];
+        stepBReal = new float[unitarySize];
+        stepBImag = new float[unitarySize];
+        stepResultReal = new float[unitarySize];
+        stepResultImag = new float[unitarySize];
+
+        stepMulSchedule = new TaskSchedule("stepMul")
+                .streamIn(stepAReal, stepAImag, stepBReal, stepBImag)
+                .task("stepMulTask", UnitaryOperand::matrixProduct,
+                        stepAReal, stepAImag, unitaryDimension, unitaryDimension,
+                        stepBReal, stepBImag, unitaryDimension,
+                        stepResultReal, stepResultImag)
+                .streamOut(stepResultReal, stepResultImag);
+
+
+        // Application of complex unitary matrix to final state vector
+        ComplexTensor initVector = new State(noQubits).getStateVector();
+        finalState = new State(noQubits);
+
+        stepVectorSchedule = new TaskSchedule("stepVector")
+                .streamIn(stepResultReal, stepResultImag,
+                        initVector.getRawRealData(), initVector.getRawImagData())
+                .task("stepVectorTask", UnitaryOperand::matrixVectorProduct,
+                        stepResultReal, stepResultImag, unitaryDimension, unitaryDimension,
+                        initVector.getRawRealData(), initVector.getRawImagData(),
+                        finalState.getStateVector().getRawRealData(), finalState.getStateVector().getRawImagData())
+                .streamOut(finalState.getStateVector().getRawRealData(), finalState.getStateVector().getRawImagData());
+    }
+
+    private void prepareStepUnitary(int noQubits, Step step, float[] resultReal, float[] resultImag) {
         List<ComplexTensor> stepOperationData = dataProvider.getStepOperationData(noQubits, step);
-        if (stepOperationData.size() == 1)
-            return stepOperationData.get(0);
-
         ListIterator<ComplexTensor> iterator = stepOperationData.listIterator(stepOperationData.size());
-
-        int count = 0;
-
-        float[] realA, realB, realC = null;
-        float[] imagA, imagB, imagC = null;
-        int rowsA, rowsB, rowsC = 0;
-        TaskSchedule taskSchedule = new TaskSchedule("stepUnitary" + scheduleId);
-
         ComplexTensor stepUnitary = iterator.previous();
-        rowsA = stepUnitary.shape()[0];
-        realA = stepUnitary.getRawRealData();
-        imagA = stepUnitary.getRawImagData();
-        taskSchedule.streamIn(realA, imagA);
 
-        while (iterator.hasPrevious()) {
-            stepUnitary = iterator.previous();
-            rowsB = stepUnitary.shape()[0];
-            realB = stepUnitary.getRawRealData();
-            imagB = stepUnitary.getRawImagData();
-
-            if (count % 2 == 0) {
-                rowsC = rowsA * rowsB;
-                realC = new float[rowsC * rowsC];
-                imagC = new float[rowsC * rowsC];
-
-                taskSchedule.streamIn(realB, imagB);
-                taskSchedule.task("stepUnitaryTask" + count, UnitaryOperand::kroneckerProduct,
-                        realA, imagA, rowsA, rowsA,
-                        realB, imagB, rowsB, rowsB,
-                        realC, imagC);
-            }
-            else {
-                rowsA = rowsC * rowsB;
-                realA = new float[rowsA * rowsA];
-                imagA = new float[rowsA * rowsA];
-
-                taskSchedule.streamIn(realB, imagB);
-                taskSchedule.task("stepUnitaryTask" + count, UnitaryOperand::kroneckerProduct,
-                        realC, imagC, rowsC, rowsC,
-                        realB, imagB, rowsB, rowsB,
-                        realA, imagA);
-            }
-            count++;
+        if (!iterator.hasPrevious()) {
+            System.arraycopy(stepUnitary.getRawRealData(), 0, resultReal, 0, resultReal.length);
+            System.arraycopy(stepUnitary.getRawImagData(), 0, resultImag, 0, resultImag.length);
+            return;
         }
 
-        if (count % 2 == 0) {
-            taskSchedule.streamOut(realA, imagA);
-            taskSchedule.execute();
-            return new ComplexTensor(realA, imagA, rowsA, rowsA);
-        }
-        else {
-            taskSchedule.streamOut(realC, imagC);
-            taskSchedule.execute();
-            return new ComplexTensor(realC, imagC, rowsC, rowsC);
-        }
+        while (iterator.hasPrevious() && iterator.previousIndex() > 0)
+            stepUnitary = kroneckerProduct(stepUnitary, iterator.previous());
+
+        ComplexTensor a = stepUnitary;
+        ComplexTensor b = iterator.previous();
+        UnitaryOperand.kroneckerProduct(a.getRawRealData(), a.getRawImagData(), a.shape()[0], a.shape()[1],
+                b.getRawRealData(), b.getRawImagData(), b.shape()[0], b.shape()[1],
+                resultReal, resultImag);
     }
 
-    private ComplexTensor matrixMultiplication(int scheduleId, ComplexTensor a, ComplexTensor b) {
-        int resultRows = a.shape()[0];
-        int resultCols = b.shape()[1];
-        float[] resultReal = new float[resultRows * resultCols];
-        float[] resultImag = new float[resultRows * resultCols];
-        new TaskSchedule("stepMultiplication" + scheduleId)
-                .streamIn(a.getRawRealData(), a.getRawImagData(), b.getRawRealData(), b.getRawImagData())
-                .task("stepMultiplicationTask", UnitaryOperand::matrixProduct,
-                        a.getRawRealData(), a.getRawImagData(), a.shape()[0], a.shape()[1],
-                        b.getRawRealData(), b.getRawImagData(), b.shape()[1],
-                        resultReal, resultImag)
-                .streamOut(resultReal, resultImag)
-                .execute();
-        return new ComplexTensor(resultReal, resultImag, resultRows, resultCols);
+    private ComplexTensor kroneckerProduct(ComplexTensor a, ComplexTensor b) {
+        int resultRows = a.shape()[0] * b.shape()[0];
+        int resultCols = a.shape()[1] * b.shape()[1];
+        ComplexTensor result = new ComplexTensor(resultRows,resultCols);
+        UnitaryOperand.kroneckerProduct(a.getRawRealData(), a.getRawImagData(), a.shape()[0], a.shape()[1],
+                b.getRawRealData(), b.getRawImagData(), b.shape()[0], b.shape()[1],
+                result.getRawRealData(), result.getRawImagData());
+        return result;
     }
 
-    private ComplexTensor matrixVectorMultiplication(ComplexTensor matrix, ComplexTensor vector) {
-        float[] resultReal = new float[vector.size()];
-        float[] resultImag = new float[vector.size()];
-        new TaskSchedule("stateVectorMultiplication")
-                .streamIn(matrix.getRawRealData(), matrix.getRawImagData(),
-                        vector.getRawRealData(), vector.getRawImagData())
-                .task("stateVectorMultiplicationTask", UnitaryOperand::matrixVectorProduct,
-                        matrix.getRawRealData(), matrix.getRawImagData(), matrix.shape()[0], matrix.shape()[1],
-                        vector.getRawRealData(), vector.getRawImagData(),
-                        resultReal, resultImag)
-                .streamOut(resultReal, resultImag)
-                .execute();
-        return new ComplexTensor(resultReal, resultImag, vector.size());
+    private void matrixMultiplication() {
+        // Option A - swap references (preferred - TornadoVM issue)
+        /*
+        stepMulSchedule.updateReference(stepAReal, stepResultReal);
+        stepMulSchedule.updateReference(stepAImag, stepResultImag);
+        stepMulSchedule.updateReference(stepResultReal, stepAReal);
+        stepMulSchedule.updateReference(stepResultImag, stepAImag);
+
+        ComplexTensor result = new ComplexTensor(stepResultReal, stepResultImag, unitaryDimension, unitaryDimension);
+
+        stepResultReal = stepAReal;
+        stepResultImag = stepAImag;
+        stepAReal = result.getRawRealData();
+        stepAImag = result.getRawImagData();
+        */
+
+        // Option B - swap array content
+        System.arraycopy(stepResultReal, 0, stepAReal, 0, stepAReal.length);
+        System.arraycopy(stepResultImag, 0, stepAImag, 0, stepAImag.length);
+
+        stepMulSchedule.execute();
     }
 
 }
