@@ -70,11 +70,11 @@ public class ComplexTest {
 
     @Test
     public void testComplexString() {
-        assertEquals(new Complex(-4.5f, 0).toString(), "-4.5");
-        assertEquals(new Complex(0, 4.5f).toString(), "4.5i");
-        assertEquals(new Complex(0, -4.5f).toString(), "-4.5i");
-        assertEquals(new Complex(8, -4.5f).toString(), "8.0 - 4.5i");
-        assertEquals(new Complex(8, 4.5f).toString(), "8.0 + 4.5i");
+        assertEquals(new Complex(-4.5f, 0).toString(), "-4.500 + 0.000i");
+        assertEquals(new Complex(0, 4.5f).toString(), "0.000 + 4.500i");
+        assertEquals(new Complex(0, -4.5f).toString(), "0.000 - 4.500i");
+        assertEquals(new Complex(8, -4.5f).toString(), "8.000 - 4.500i");
+        assertEquals(new Complex(8, 4.5f).toString(), "8.000 + 4.500i");
     }
 
 }

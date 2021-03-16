@@ -132,9 +132,7 @@ public class Complex {
 
     @Override
     public String toString() {
-        if (imag == 0) return real + "";
-        if (real == 0) return imag + "i";
-        if (imag < 0) return real + " - " + (-imag) + "i";
-        return real + " + " + imag + "i";
+        if (imag < 0) return String.format("%.3f - %.3fi", real, -imag);
+        return String.format("%.3f + %.3fi", real, imag);
     }
 }

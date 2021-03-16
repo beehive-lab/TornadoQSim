@@ -235,11 +235,13 @@ public class ComplexTensorTest {
     @Test
     public void testComplexTensorString() {
         ComplexTensor tensor = new ComplexTensor(2,2);
-        String string = "ComplexTensor { rank: 2, shape: [2, 2], data: [0.0, 0.0, 0.0, 0.0] }";
+        String string = "ComplexTensor { rank: 2, shape: [2, 2], data:"
+                + " [0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i] }";
         assertEquals(string, tensor.toString());
 
         tensor.insertElement(new Complex(5, -5), 1,0);
-        string = "ComplexTensor { rank: 2, shape: [2, 2], data: [0.0, 0.0, 5.0 - 5.0i, 0.0] }";
+        string = "ComplexTensor { rank: 2, shape: [2, 2], data:"
+                + " [0.000 + 0.000i, 0.000 + 0.000i, 5.000 - 5.000i, 0.000 + 0.000i] }";
         assertEquals(string, tensor.toString());
     }
 
