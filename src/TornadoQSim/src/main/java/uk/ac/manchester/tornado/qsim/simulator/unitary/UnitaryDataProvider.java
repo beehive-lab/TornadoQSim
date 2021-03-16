@@ -78,7 +78,7 @@ class UnitaryDataProvider {
     private ComplexTensor constructControlGateData(ControlGate controlGate) {
         int finalSize = (int)Math.pow(2, controlGate.size());
         ComplexTensor controlGateData = new ComplexTensor(finalSize,finalSize);
-        ComplexTensor gateData = OperationDataProvider.getInstance().getData(controlGate.type());
+        ComplexTensor gateData = OperationDataProvider.getInstance().getData(controlGate.gate().type());
         int control, target;
         if (controlGate.controlQubit() > controlGate.targetQubit()) {
             control = controlGate.size() - 1;

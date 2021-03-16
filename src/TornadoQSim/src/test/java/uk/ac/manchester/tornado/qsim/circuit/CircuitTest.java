@@ -225,7 +225,7 @@ public class CircuitTest {
             }
             else if (operation instanceof ControlGate) {
                 ControlGate controlGate = (ControlGate)(step.getOperation(qubit));
-                assertEquals(types[qubit], controlGate.type());
+                assertEquals(types[qubit], controlGate.gate().type());
                 assertFalse(step.isQubitFree(qubit));
             }
             else {

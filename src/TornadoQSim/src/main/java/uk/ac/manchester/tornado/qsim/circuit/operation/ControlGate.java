@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Ales Kubicek
  */
 public class ControlGate implements Operation {
-    private final GateType type;
+    private final Gate gate;
     private final int control;
     private final int target;
 
@@ -21,21 +21,23 @@ public class ControlGate implements Operation {
      * @param control qubit that conditionally controls the standard quantum gate.
      * @param target qubit to which the standard quatum gate applies.
      */
-    public ControlGate(GateType type, int control, int target) {
+    public ControlGate(Gate gate, int control, int target) {
+        if (gate == null)
+            throw new IllegalArgumentException("Ivalid gate supplied (NULL).");
         if (control < 0 || target < 0)
             throw new IllegalArgumentException("Invalid control or target qubit supplied.");
         if (control == target)
             throw new IllegalArgumentException("Control and target qubits must act on different qubits.");
-        this.type = type;
+        this.gate = gate;
         this.control = control;
         this.target = target;
     }
 
     /**
-     * Gets the type of the standard quantum gate.
-     * @return gate type of the quantum gate.
+     * Gets the the standard quantum gate.
+     * @return quantum gate controlled by the control qubit.
      */
-    public GateType type() { return type; }
+    public Gate gate() { return gate; }
 
     /**
      * Gets the control qubit.
@@ -75,11 +77,11 @@ public class ControlGate implements Operation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ControlGate that = (ControlGate) o;
-        return control == that.control && target == that.target && type == that.type;
+        return control == that.control && target == that.target && gate.equals(that.gate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, control, target);
+        return Objects.hash(gate, control, target);
     }
 }

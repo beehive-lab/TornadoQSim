@@ -36,25 +36,28 @@ public class OperationTest {
 
     @Test
     public void testControlGate() {
-        ControlGate cGate = new ControlGate(GateType.X, 0, 1);
-        assertEquals(GateType.X, cGate.type());
+        ControlGate cGate = new ControlGate(new Gate(GateType.X, 1), 0, 1);
+        assertEquals(GateType.X, cGate.gate().type());
         assertEquals(0, cGate.controlQubit());
         assertEquals(1, cGate.targetQubit());
         assertArrayEquals(new int[] { 0, 1 }, cGate.involvedQubits());
         assertEquals(2, cGate.size());
 
-        cGate = new ControlGate(GateType.X, 4, 0);
-        assertEquals(GateType.X, cGate.type());
+        cGate = new ControlGate(new Gate(GateType.X, 0), 4, 0);
+        assertEquals(GateType.X, cGate.gate().type());
         assertEquals(4, cGate.controlQubit());
         assertEquals(0, cGate.targetQubit());
         assertArrayEquals(new int[] { 0, 1, 2, 3, 4 }, cGate.involvedQubits());
         assertEquals(5, cGate.size());
 
-        assertEquals(new ControlGate(GateType.X, 4, 0), cGate);
+        assertEquals(new ControlGate(new Gate(GateType.X, 0), 4, 0), cGate);
 
-        assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, 3, 3));
-        assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, -1, 3));
-        assertThrows(IllegalArgumentException.class, () -> new ControlGate(GateType.X, 3, -1));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ControlGate(new Gate(GateType.X, 3), 3, 3));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ControlGate(new Gate(GateType.X, 3), -1, 3));
+        assertThrows(IllegalArgumentException.class, ()
+                -> new ControlGate(new Gate(GateType.X, -1), 3, -1));
     }
 
     @Test

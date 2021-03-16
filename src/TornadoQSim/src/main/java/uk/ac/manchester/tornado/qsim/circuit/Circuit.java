@@ -102,49 +102,70 @@ public class Circuit {
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CNOT(int controlQubit, int targetQubit) { addControlGate(GateType.X, controlQubit, targetQubit); }
+    public void CNOT(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.X, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled X gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CX(int controlQubit, int targetQubit) { addControlGate(GateType.X, controlQubit, targetQubit); }
+    public void CX(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.X, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled Y gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CY(int controlQubit, int targetQubit) { addControlGate(GateType.Y, controlQubit, targetQubit); }
+    public void CY(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.Y, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled Z gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CZ(int controlQubit, int targetQubit) { addControlGate(GateType.Z, controlQubit, targetQubit); }
+    public void CZ(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.Z, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled H gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CH(int controlQubit, int targetQubit) { addControlGate(GateType.H, controlQubit, targetQubit); }
+    public void CH(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.H, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled S gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CS(int controlQubit, int targetQubit) { addControlGate(GateType.S, controlQubit, targetQubit); }
+    public void CS(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.S, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
     /**
      * Applies controlled T gate to the supplied control and target qubits.
      * @param controlQubit control qubit for this controlled gate.
      * @param targetQubit target qubit for this controlled gate.
      */
-    public void CT(int controlQubit, int targetQubit) { addControlGate(GateType.T, controlQubit, targetQubit); }
+    public void CT(int controlQubit, int targetQubit) {
+        Gate targetGate = new Gate(GateType.T, targetQubit);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
 
 
     /**
@@ -203,10 +224,10 @@ public class Circuit {
             addOperation(new Gate(type, qubit));
     }
 
-    private void addControlGate(GateType type, int controlQubit, int targetQubit) {
+    private void addControlGate(Gate gate, int controlQubit, int targetQubit) {
         if (!areQubitsValid(controlQubit, targetQubit))
             throw new IllegalArgumentException("Invalid qubits supplied.");
-        addOperation(new ControlGate(type, controlQubit, targetQubit));
+        addOperation(new ControlGate(gate, controlQubit, targetQubit));
     }
 
     private void addFunction(FunctionType type, int fromQubit, int toQubit) {

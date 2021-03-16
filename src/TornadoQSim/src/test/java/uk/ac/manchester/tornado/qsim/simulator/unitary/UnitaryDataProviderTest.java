@@ -19,12 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UnitaryDataProviderTest {
 
-    private static UnitaryDataProvider dataProvider;
+    private static UnitaryDataProvider provider;
     private static Complex ZERO, ONE;
 
     @BeforeAll
     public static void prepareDataProvider() {
-        dataProvider = new UnitaryDataProvider(false);
+        provider = new UnitaryDataProvider(false);
         ZERO = new Complex(0,0);
         ONE = new Complex(1,0);
     }
@@ -32,19 +32,19 @@ public class UnitaryDataProviderTest {
     @Test
     public void testGateUnitaryData() {
         OperationDataProvider origin = OperationDataProvider.getInstance();
-        assertEquals(origin.getData(GateType.X), dataProvider.getOperationData(new Gate(GateType.X, 0)));
-        assertEquals(origin.getData(GateType.Y), dataProvider.getOperationData(new Gate(GateType.Y, 0)));
-        assertEquals(origin.getData(GateType.Z), dataProvider.getOperationData(new Gate(GateType.Z, 0)));
-        assertEquals(origin.getData(GateType.H), dataProvider.getOperationData(new Gate(GateType.H, 0)));
-        assertEquals(origin.getData(GateType.S), dataProvider.getOperationData(new Gate(GateType.S, 0)));
-        assertEquals(origin.getData(GateType.T), dataProvider.getOperationData(new Gate(GateType.T, 0)));
-        assertEquals(origin.getData(GateType.I), dataProvider.getOperationData(new Gate(GateType.I, 0)));
+        assertEquals(origin.getData(GateType.X), provider.getOperationData(new Gate(GateType.X, 0)));
+        assertEquals(origin.getData(GateType.Y), provider.getOperationData(new Gate(GateType.Y, 0)));
+        assertEquals(origin.getData(GateType.Z), provider.getOperationData(new Gate(GateType.Z, 0)));
+        assertEquals(origin.getData(GateType.H), provider.getOperationData(new Gate(GateType.H, 0)));
+        assertEquals(origin.getData(GateType.S), provider.getOperationData(new Gate(GateType.S, 0)));
+        assertEquals(origin.getData(GateType.T), provider.getOperationData(new Gate(GateType.T, 0)));
+        assertEquals(origin.getData(GateType.I), provider.getOperationData(new Gate(GateType.I, 0)));
     }
 
     @Test
     public void testControlGateUnitaryData() {
         ComplexTensor controlGateData;
-        controlGateData = dataProvider.getOperationData(new ControlGate(GateType.X, 6, 5));
+        controlGateData = provider.getOperationData(new ControlGate(new Gate(GateType.X, 5), 6, 5));
 
         assertEquals(ONE, controlGateData.getElement(0,0));
         assertEquals(ZERO, controlGateData.getElement(0,1));
@@ -63,7 +63,7 @@ public class UnitaryDataProviderTest {
         assertEquals(ONE, controlGateData.getElement(3,2));
         assertEquals(ZERO, controlGateData.getElement(3,3));
 
-        controlGateData = dataProvider.getOperationData(new ControlGate(GateType.X, 5, 6));
+        controlGateData = provider.getOperationData(new ControlGate(new Gate(GateType.X, 6), 5, 6));
 
         assertEquals(ONE, controlGateData.getElement(0,0));
         assertEquals(ZERO, controlGateData.getElement(0,1));
@@ -94,21 +94,21 @@ public class UnitaryDataProviderTest {
         ComplexTensor customData = new ComplexTensor(2,2);
         OperationDataProvider.getInstance().registerFunctionData("custom", customData);
 
-        assertEquals(customData, dataProvider.getOperationData(function));
+        assertEquals(customData, provider.getOperationData(function));
 
         Function invalidSize = new Function("custom", 0, 1);
         Function invalidName = new Function("invalid", 0, 0);
 
-        assertThrows(IllegalArgumentException.class, () -> dataProvider.getOperationData(invalidSize));
-        assertThrows(IllegalArgumentException.class, () -> dataProvider.getOperationData(invalidName));
+        assertThrows(IllegalArgumentException.class, () -> provider.getOperationData(invalidSize));
+        assertThrows(IllegalArgumentException.class, () -> provider.getOperationData(invalidName));
     }
 
     @Test
     public void testInstructionUnitaryData() {
         Instruction measure = new Instruction(InstructionType.Measure, 0);
         Instruction reset = new Instruction(InstructionType.Reset, 0);
-        assertThrows(UnsupportedOperationException.class, () -> dataProvider.getOperationData(measure));
-        assertThrows(UnsupportedOperationException.class, () -> dataProvider.getOperationData(reset));
+        assertThrows(UnsupportedOperationException.class, () -> provider.getOperationData(measure));
+        assertThrows(UnsupportedOperationException.class, () -> provider.getOperationData(reset));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class UnitaryDataProviderTest {
         circuit.Z(4);
 
         Step step = circuit.getSteps().get(0);
-        List<ComplexTensor> stepUnitaryData = dataProvider.getStepOperationData(5, step);
+        List<ComplexTensor> stepUnitaryData = provider.getStepOperationData(5, step);
         List<ComplexTensor> expectedData = getExpectedData();
 
         assertEquals(expectedData, stepUnitaryData);
@@ -129,7 +129,7 @@ public class UnitaryDataProviderTest {
         List<ComplexTensor> expected = new LinkedList<>();
 
         expected.add(OperationDataProvider.getInstance().getData(GateType.H));
-        expected.add(dataProvider.getOperationData(new ControlGate(GateType.X, 2, 1)));
+        expected.add(provider.getOperationData(new ControlGate(new Gate(GateType.X, 1), 2, 1)));
         expected.add(OperationDataProvider.getInstance().getData(GateType.I));
         expected.add(OperationDataProvider.getInstance().getData(GateType.Z));
 
