@@ -14,12 +14,14 @@ import java.util.HashMap;
 public class OperationDataProvider {
     private final HashMap<String, ComplexTensor> customFunctionData;
     private final HashMap<GateType, ComplexTensor> gateData;
+    private final HashMap<Float, ComplexTensor> phaseGateData;
 
     private static OperationDataProvider instance;
 
     private OperationDataProvider() {
         customFunctionData = new HashMap<>();
         gateData = new HashMap<>();
+        phaseGateData = new HashMap<>();
     }
 
     /**
@@ -78,10 +80,22 @@ public class OperationDataProvider {
     public ComplexTensor getData(GateType type) {
         if (gateData.containsKey(type))
             return gateData.get(type);
-        return createDataEntry(type);
+        return createDataEntry(type, 0);
     }
 
-    private ComplexTensor createDataEntry(GateType type) {
+    /**
+     * Gets complex tensor data for the phase shift quantum logic gate.
+     * @param phi phase shift in radians.
+     * @return phase shift gate data.
+     */
+    public ComplexTensor getPhaseShiftData(float phi) {
+        if (phaseGateData.containsKey(phi))
+            return phaseGateData.get(phi);
+        return createDataEntry(GateType.R, phi);
+    }
+
+    private ComplexTensor createDataEntry(GateType type, float phi) {
+        Complex phaseShift;
         ComplexTensor dataEntry = new ComplexTensor(2,2);
         switch (type) {
             case X:
@@ -93,8 +107,9 @@ public class OperationDataProvider {
                 dataEntry.insertElement(new Complex(0,1), 1,0);
                 break;
             case Z:
+                phaseShift = new Complex(-1,0);
                 dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(new Complex(-1,0), 1,1);
+                dataEntry.insertElement(phaseShift, 1,1);
                 break;
             case H:
                 dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),0), 0,0);
@@ -103,12 +118,19 @@ public class OperationDataProvider {
                 dataEntry.insertElement(new Complex((float)(-1 / Math.sqrt(2)),0), 1,1);
                 break;
             case S:
+                phaseShift = new Complex(0,1);
                 dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(new Complex(0,1), 1,1);
+                dataEntry.insertElement(phaseShift, 1,1);
                 break;
             case T:
+                phaseShift = new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2)));
                 dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2))), 1,1);
+                dataEntry.insertElement(phaseShift, 1,1);
+                break;
+            case R:
+                phaseShift = new Complex(0,phi).exp();
+                dataEntry.insertElement(new Complex(1,0), 0,0);
+                dataEntry.insertElement(phaseShift, 1,1);
                 break;
             case I:
                 dataEntry.insertElement(new Complex(1,0), 0,0);
@@ -116,7 +138,10 @@ public class OperationDataProvider {
                 break;
 
         }
-        gateData.put(type, dataEntry);
+        if (type == GateType.R)
+            phaseGateData.put(phi, dataEntry);
+        else
+            gateData.put(type, dataEntry);
         return dataEntry;
     }
 

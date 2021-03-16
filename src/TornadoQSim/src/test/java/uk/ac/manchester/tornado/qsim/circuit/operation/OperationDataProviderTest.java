@@ -5,6 +5,8 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
 import uk.ac.manchester.tornado.qsim.math.Complex;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationDataProviderTest {
@@ -38,6 +40,27 @@ public class OperationDataProviderTest {
 
         gate = new ComplexTensor(gateData(GateType.I), 2,2);
         assertEquals(gate, dataProvider.getData(GateType.I));
+    }
+
+    @Test
+    public void testPhaseShiftGateDataProvider() {
+        OperationDataProvider dataProvider = OperationDataProvider.getInstance();
+
+        float phi = (float)(Math.PI / 1.0);
+        ComplexTensor gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+
+        phi = (float)(Math.PI / 2.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+
+        phi = (float)(Math.PI / 4.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+
+        phi = (float)(Math.PI / 8.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
     }
 
     @Test
@@ -125,5 +148,14 @@ public class OperationDataProviderTest {
             default:
                 return new Complex[0];
         }
+    }
+
+    private Complex[] phaseShiftGateData(float phi) {
+        return new Complex[] {
+                new Complex(1,0),
+                new Complex(0,0),
+                new Complex(0,0),
+                new Complex(0,phi).exp()
+        };
     }
 }
