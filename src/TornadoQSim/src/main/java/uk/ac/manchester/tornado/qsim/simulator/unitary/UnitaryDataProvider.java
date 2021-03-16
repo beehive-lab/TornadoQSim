@@ -56,10 +56,12 @@ class UnitaryDataProvider {
      */
     protected List<ComplexTensor> getStepOperationData(int noQubits, Step step) {
         LinkedList<ComplexTensor> operationData = new LinkedList<>();
+
         int qubit = 0;
         while (qubit < noQubits) {
             if (step.isQubitFree(qubit)) {
-                operationData.add(OperationDataProvider.getInstance().getData(GateType.I));
+                Gate identity = new Gate(GateType.I, qubit);
+                operationData.add(OperationDataProvider.getInstance().getData(identity));
                 qubit++;
             }
             else {
@@ -72,13 +74,13 @@ class UnitaryDataProvider {
     }
 
     private ComplexTensor constructGateData(Gate gate) {
-        return OperationDataProvider.getInstance().getData(gate.type());
+        return OperationDataProvider.getInstance().getData(gate);
     }
 
     private ComplexTensor constructControlGateData(ControlGate controlGate) {
         int finalSize = (int)Math.pow(2, controlGate.size());
         ComplexTensor controlGateData = new ComplexTensor(finalSize,finalSize);
-        ComplexTensor gateData = OperationDataProvider.getInstance().getData(controlGate.gate().type());
+        ComplexTensor gateData = OperationDataProvider.getInstance().getData(controlGate.gate());
         int control, target;
         if (controlGate.controlQubit() > controlGate.targetQubit()) {
             control = controlGate.size() - 1;

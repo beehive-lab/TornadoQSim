@@ -32,13 +32,20 @@ public class UnitaryDataProviderTest {
     @Test
     public void testGateUnitaryData() {
         OperationDataProvider origin = OperationDataProvider.getInstance();
-        assertEquals(origin.getData(GateType.X), provider.getOperationData(new Gate(GateType.X, 0)));
-        assertEquals(origin.getData(GateType.Y), provider.getOperationData(new Gate(GateType.Y, 0)));
-        assertEquals(origin.getData(GateType.Z), provider.getOperationData(new Gate(GateType.Z, 0)));
-        assertEquals(origin.getData(GateType.H), provider.getOperationData(new Gate(GateType.H, 0)));
-        assertEquals(origin.getData(GateType.S), provider.getOperationData(new Gate(GateType.S, 0)));
-        assertEquals(origin.getData(GateType.T), provider.getOperationData(new Gate(GateType.T, 0)));
-        assertEquals(origin.getData(GateType.I), provider.getOperationData(new Gate(GateType.I, 0)));
+        Gate gate = new Gate(GateType.X, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.Y, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.Z, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.H, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.S, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.T, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
+        gate = new Gate(GateType.I, 0);
+        assertEquals(origin.getData(gate), provider.getOperationData(gate));
     }
 
     @Test
@@ -128,10 +135,10 @@ public class UnitaryDataProviderTest {
     private List<ComplexTensor> getExpectedData() {
         List<ComplexTensor> expected = new LinkedList<>();
 
-        expected.add(OperationDataProvider.getInstance().getData(GateType.H));
+        expected.add(OperationDataProvider.getInstance().getData(new Gate(GateType.H, 0)));
         expected.add(provider.getOperationData(new ControlGate(new Gate(GateType.X, 1), 2, 1)));
-        expected.add(OperationDataProvider.getInstance().getData(GateType.I));
-        expected.add(OperationDataProvider.getInstance().getData(GateType.Z));
+        expected.add(OperationDataProvider.getInstance().getData(new Gate(GateType.I, 0)));
+        expected.add(OperationDataProvider.getInstance().getData(new Gate(GateType.Z, 0)));
 
         return expected;
     }

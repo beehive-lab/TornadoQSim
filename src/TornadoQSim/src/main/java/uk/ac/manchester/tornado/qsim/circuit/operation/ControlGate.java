@@ -17,7 +17,7 @@ public class ControlGate implements Operation {
 
     /**
      * Constructs a standard quantum controlled gate.
-     * @param type type of the standard quantum gate (controlled by the control qubit).
+     * @param gate standard quantum gate (controlled by the control qubit).
      * @param control qubit that conditionally controls the standard quantum gate.
      * @param target qubit to which the standard quatum gate applies.
      */

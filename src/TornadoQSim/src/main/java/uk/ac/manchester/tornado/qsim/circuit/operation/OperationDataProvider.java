@@ -74,24 +74,20 @@ public class OperationDataProvider {
 
     /**
      * Gets complex tensor data for the standard quantum logic gate.
-     * @param type type of the standard quantum logic gate.
+     * @param gate standard quantum logic gate.
      * @return gate data.
      */
-    public ComplexTensor getData(GateType type) {
-        if (gateData.containsKey(type))
-            return gateData.get(type);
-        return createDataEntry(type, 0);
-    }
-
-    /**
-     * Gets complex tensor data for the phase shift quantum logic gate.
-     * @param phi phase shift in radians.
-     * @return phase shift gate data.
-     */
-    public ComplexTensor getPhaseShiftData(float phi) {
-        if (phaseGateData.containsKey(phi))
-            return phaseGateData.get(phi);
-        return createDataEntry(GateType.R, phi);
+    public ComplexTensor getData(Gate gate) {
+        if (gate.type() == GateType.R) {
+            if (phaseGateData.containsKey(gate.phi()))
+                return phaseGateData.get(gate.phi());
+            return createDataEntry(gate.type(), gate.phi());
+        }
+        else {
+            if (gateData.containsKey(gate.type()))
+                return gateData.get(gate.type());
+            return createDataEntry(gate.type(), 0);
+        }
     }
 
     private ComplexTensor createDataEntry(GateType type, float phi) {

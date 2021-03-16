@@ -5,8 +5,6 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
 import uk.ac.manchester.tornado.qsim.math.Complex;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OperationDataProviderTest {
@@ -21,25 +19,25 @@ public class OperationDataProviderTest {
         OperationDataProvider dataProvider = OperationDataProvider.getInstance();
 
         ComplexTensor gate = new ComplexTensor(gateData(GateType.X), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.X));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.X, 0)));
 
         gate = new ComplexTensor(gateData(GateType.Y), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.Y));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.Y, 0)));
 
         gate = new ComplexTensor(gateData(GateType.Z), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.Z));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.Z, 0)));
 
         gate = new ComplexTensor(gateData(GateType.H), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.H));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.H, 0)));
 
         gate = new ComplexTensor(gateData(GateType.S), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.S));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.S, 0)));
 
         gate = new ComplexTensor(gateData(GateType.T), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.T));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.T, 0)));
 
         gate = new ComplexTensor(gateData(GateType.I), 2,2);
-        assertEquals(gate, dataProvider.getData(GateType.I));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.I, 0)));
     }
 
     @Test
@@ -48,19 +46,19 @@ public class OperationDataProviderTest {
 
         float phi = (float)(Math.PI / 1.0);
         ComplexTensor gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
-        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
         phi = (float)(Math.PI / 2.0);
         gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
-        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
         phi = (float)(Math.PI / 4.0);
         gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
-        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
         phi = (float)(Math.PI / 8.0);
         gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
-        assertEquals(gate, dataProvider.getPhaseShiftData(phi));
+        assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
     }
 
     @Test
