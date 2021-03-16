@@ -101,14 +101,12 @@ public class CircuitTest {
         OperationDataProvider.getInstance().registerFunctionData("custom", new ComplexTensor(2,2));
         Circuit circuit = new Circuit(4);
         circuit.swap(0,1);
-        circuit.qft(0,3);
-        circuit.oracle(1,3);
         circuit.customFunction("custom",0,0);
 
         // Check circuit properties
         assertEquals(4, circuit.qubitCount());
-        assertEquals(3, circuit.depth());
-        assertEquals(3, circuit.getSteps().size());
+        assertEquals(2, circuit.depth());
+        assertEquals(2, circuit.getSteps().size());
 
         // Check gate composition
         List<Step> steps = circuit.getSteps();
@@ -117,17 +115,12 @@ public class CircuitTest {
         types = new FunctionType[] { FunctionType.Swap, FunctionType.Swap, null, null };
         assertStep(steps.get(0), types);
 
-        types = new FunctionType[] { FunctionType.QFT, FunctionType.QFT, FunctionType.QFT, FunctionType.QFT };
+        types = new FunctionType[] { FunctionType.Custom, null, null, null };
         assertStep(steps.get(1), types);
-
-        types = new FunctionType[] { FunctionType.Custom, FunctionType.Oracle, FunctionType.Oracle, FunctionType.Oracle };
-        assertStep(steps.get(2), types);
 
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(3, 4));
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(1, 3));
-        assertThrows(IllegalArgumentException.class, () -> circuit.qft(-1, 0));
-        assertThrows(IllegalArgumentException.class, () -> circuit.qft(2, 10));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",2, 10));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("invalid",2, 3));
@@ -167,7 +160,7 @@ public class CircuitTest {
     public void testCircuitAppend() {
         Circuit circuit = new Circuit(3);
         circuit.H(0,1,2);
-        circuit.qft(0,2);
+        circuit.swap(1,2);
 
         Circuit another = new Circuit(3);
         another.X(0,2);
@@ -183,7 +176,7 @@ public class CircuitTest {
         List<Step> steps = circuit.getSteps();
 
         assertStep(steps.get(0), new GateType[] { GateType.H, GateType.H, GateType.H });
-        assertStep(steps.get(1), new FunctionType[] { FunctionType.QFT, FunctionType.QFT, FunctionType.QFT });
+        assertStep(steps.get(1), new FunctionType[] { null, FunctionType.Swap, FunctionType.Swap });
         assertStep(steps.get(2), new GateType[] { GateType.X, null, GateType.X });
         assertStep(steps.get(3), new InstructionType[] { InstructionType.Measure, InstructionType.Measure, InstructionType.Measure });
 
@@ -195,7 +188,7 @@ public class CircuitTest {
     public void testCircuitEquality() {
         Circuit a = new Circuit(3);
         a.H(0,1,2);
-        a.qft(0,2);
+        a.swap(0,1);
         a.X(1);
         a.measure(0,1,2);
 
@@ -203,14 +196,14 @@ public class CircuitTest {
         b.H(0);
         b.H(1);
         b.H(2);
-        b.qft(0,2);
+        b.swap(0,1);
         b.X(1);
         b.measure(0,1);
         b.measure(2);
 
         Circuit c = new Circuit(3);
         c.H(0,1,2);
-        c.qft(0,2);
+        c.swap(0,1);
         c.Y(1);
         c.measure(0,1,2);
 

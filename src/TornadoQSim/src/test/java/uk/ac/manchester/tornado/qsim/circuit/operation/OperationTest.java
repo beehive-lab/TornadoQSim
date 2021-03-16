@@ -59,12 +59,12 @@ public class OperationTest {
 
     @Test
     public void testFunction() {
-        Function qFunction = new Function(FunctionType.Oracle, 0, 2);
-        assertEquals(FunctionType.Oracle, qFunction.type());
+        Function qFunction = new Function(FunctionType.Swap, 0, 1);
+        assertEquals(FunctionType.Swap, qFunction.type());
         assertEquals("", qFunction.name());
-        assertArrayEquals(new int[] { 0, 1, 2 }, qFunction.targetQubits());
-        assertArrayEquals(new int[] { 0, 1, 2 }, qFunction.involvedQubits());
-        assertEquals(3, qFunction.size());
+        assertArrayEquals(new int[] { 0, 1 }, qFunction.targetQubits());
+        assertArrayEquals(new int[] { 0, 1 }, qFunction.involvedQubits());
+        assertEquals(2, qFunction.size());
 
         qFunction = new Function("custom", 2, 3);
         assertEquals(FunctionType.Custom, qFunction.type());
@@ -75,9 +75,9 @@ public class OperationTest {
 
         assertEquals(new Function("custom", 2, 3), qFunction);
 
-        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, 3, 2));
-        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, -1, 3));
-        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Oracle, 3, -1));
+        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Swap, 3, 2));
+        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Swap, -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> new Function(FunctionType.Swap, 3, -1));
         assertThrows(IllegalArgumentException.class, () -> new Function("custom", 3, 2));
     }
 

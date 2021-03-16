@@ -86,8 +86,6 @@ public class UnitaryDataProviderTest {
     @Test
     public void testFunctionUnitaryData() {
         // TODO: implement data generation for standard functions
-        Function function = new Function(FunctionType.QFT, 0, 2);
-        assertThrows(UnsupportedOperationException.class, () -> dataProvider.getOperationData(function));
     }
 
     @Test

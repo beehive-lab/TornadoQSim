@@ -159,20 +159,6 @@ public class Circuit {
     }
 
     /**
-     * Applies oracle function to the supplied range of qubits.
-     * @param fromQubit from this qubit.
-     * @param toQubit to this qubit.
-     */
-    public void oracle(int fromQubit, int toQubit) { addFunction(FunctionType.Oracle, fromQubit, toQubit); }
-
-    /**
-     * Applies quantum fourier transform function to the supplied range of qubits.
-     * @param fromQubit from this qubit.
-     * @param toQubit to this qubit.
-     */
-    public void qft(int fromQubit, int toQubit) { addFunction(FunctionType.QFT, fromQubit, toQubit); }
-
-    /**
      * Applies custom function to the supplied range of qubits.
      * This function must first be registered with the operation data provider.
      * @param name name of the custom quantum function.

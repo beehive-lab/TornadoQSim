@@ -35,7 +35,7 @@ public class StepTest {
         Operation[] operations = new Operation[] {
                 new Gate(GateType.H, 0),
                 new ControlGate(GateType.X, 3, 1),
-                new Function(FunctionType.Oracle, 4, 5),
+                new Function(FunctionType.Swap, 4, 5),
                 new Instruction(InstructionType.Measure, 6)
         };
 
