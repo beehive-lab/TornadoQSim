@@ -96,7 +96,17 @@ public class Complex {
      * @return conjugate of this complex number.
      */
     public Complex conjugate() {
-        return  new Complex(real, -imag);
+        return new Complex(real, -imag);
+    }
+
+    /**
+     * Calculates a complex exponential function (e^this).
+     * @return complex exponential of this complex number.
+     */
+    public Complex exp() {
+        float expReal = (float)(Math.exp(real) * Math.cos(imag));
+        float expImag = (float)(Math.exp(real) * Math.sin(imag));
+        return new Complex(expReal, expImag);
     }
 
     /**

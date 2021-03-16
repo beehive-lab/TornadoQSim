@@ -46,6 +46,7 @@ public class ComplexTest {
         a = new Complex(3, 4);
         assertEquals(new Complex(15, 20), a.scale(5));
         assertEquals(new Complex(3, -4), a.conjugate());
+        assertEquals(new Complex(-13.128783f, -15.200785f), a.exp());
         assertEquals(5, a.abs());
     }
 
