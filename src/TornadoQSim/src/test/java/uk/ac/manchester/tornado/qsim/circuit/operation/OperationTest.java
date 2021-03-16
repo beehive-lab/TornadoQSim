@@ -20,6 +20,18 @@ public class OperationTest {
         assertEquals(new Gate(GateType.H, 0), gate);
 
         assertThrows(IllegalArgumentException.class, () -> new Gate(GateType.X, -1));
+        assertThrows(UnsupportedOperationException.class, () -> new Gate(GateType.X, 0, (float)Math.PI/2));
+        assertThrows(UnsupportedOperationException.class, () -> gate.phi());
+    }
+
+    @Test
+    public void testPhaseShiftGate() {
+        Gate gate = new Gate(GateType.R, 0, (float)Math.PI/2);
+        assertEquals(GateType.R, gate.type());
+        assertEquals((float)Math.PI/2, gate.phi());
+        assertEquals(0, gate.targetQubit());
+        assertArrayEquals(new int[] { 0 }, gate.involvedQubits());
+        assertEquals(1, gate.size());
     }
 
     @Test

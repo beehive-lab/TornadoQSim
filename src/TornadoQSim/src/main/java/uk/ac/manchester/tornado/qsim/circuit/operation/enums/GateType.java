@@ -11,5 +11,6 @@ public enum GateType {
     H,
     S,
     T,
+    R,
     I,
 }

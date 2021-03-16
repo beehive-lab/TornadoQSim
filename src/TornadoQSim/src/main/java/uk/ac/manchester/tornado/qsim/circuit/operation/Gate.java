@@ -12,6 +12,7 @@ import java.util.Objects;
 public class Gate implements Operation {
     private final GateType type;
     private final int target;
+    private final float phi;
 
     /**
      * Constructs a standard quantum logic gate.
@@ -21,8 +22,27 @@ public class Gate implements Operation {
     public Gate(GateType type, int target) {
         if (target < 0)
             throw new IllegalArgumentException("Invalid target qubit supplied.");
+        if (type == GateType.R)
+            throw new UnsupportedOperationException("Use constructor with phase parameter for 'R' gate.");
         this.type = type;
         this.target = target;
+        this.phi = 0;
+    }
+
+    /**
+     * Constructs a phase shift quantum logic gate.
+     * @param type type of the standard quantum gate.
+     * @param target qubit to which the standard quatum gate applies.
+     * @param phi phase shift in radians.
+     */
+    public Gate(GateType type, int target, float phi) {
+        if (target < 0)
+            throw new IllegalArgumentException("Invalid target qubit supplied.");
+        if (type != GateType.R)
+            throw new UnsupportedOperationException("Use constructor without phase parameter for this type of gate.");
+        this.type = type;
+        this.target = target;
+        this.phi = phi;
     }
 
     /**
@@ -36,6 +56,17 @@ public class Gate implements Operation {
      * @return target qubit.
      */
     public int targetQubit() { return target; }
+
+    /**
+     * Gets the phase shift in radians.
+     * Only for 'R' quantum gate.
+     * @return phase shift in radians.
+     */
+    public float phi() {
+        if (type != GateType.R)
+            throw new UnsupportedOperationException("Invalid operation for gates other than 'R'.");
+        return phi;
+    }
 
     @Override
     public int[] involvedQubits() {
