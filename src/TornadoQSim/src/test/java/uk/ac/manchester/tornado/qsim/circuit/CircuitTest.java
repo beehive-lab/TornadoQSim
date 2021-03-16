@@ -39,6 +39,7 @@ public class CircuitTest {
         circuit.T(5);
         circuit.H(0,1,2,3,4,5);
         circuit.X(3);
+        circuit.R((float)(Math.PI / 2), 4);
 
         // Check circuit properties
         assertEquals(6, circuit.qubitCount());
@@ -55,7 +56,7 @@ public class CircuitTest {
         types = new GateType[] { GateType.H, GateType.H, GateType.H, GateType.H, GateType.H, GateType.H };
         assertStep(steps.get(1), types);
 
-        types = new GateType[] { null, null, null, GateType.X, null, null };
+        types = new GateType[] { null, null, null, GateType.X, GateType.R, null };
         assertStep(steps.get(2), types);
 
         assertThrows(IllegalArgumentException.class, () -> circuit.H(-1));
@@ -72,11 +73,12 @@ public class CircuitTest {
         circuit.CH(5,3);
         circuit.CS(4, 5);
         circuit.CT(2, 0);
+        circuit.CR(0,5,(float)(Math.PI / 2));
 
         // Check circuit properties
         assertEquals(6, circuit.qubitCount());
-        assertEquals(3, circuit.depth());
-        assertEquals(3, circuit.getSteps().size());
+        assertEquals(4, circuit.depth());
+        assertEquals(4, circuit.getSteps().size());
 
         // Check gate composition
         List<Step> steps = circuit.getSteps();
@@ -90,6 +92,9 @@ public class CircuitTest {
 
         types = new GateType[] { GateType.T, GateType.T, GateType.T, null, GateType.S, GateType.S };
         assertStep(steps.get(2), types);
+
+        types = new GateType[] { GateType.R, GateType.R, GateType.R, GateType.R, GateType.R, GateType.R };
+        assertStep(steps.get(3), types);
 
         assertThrows(IllegalArgumentException.class, () -> circuit.CH(-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.CH(2, 10));

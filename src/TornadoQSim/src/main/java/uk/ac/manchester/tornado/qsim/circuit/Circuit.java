@@ -96,6 +96,13 @@ public class Circuit {
      */
     public void T(int... qubits) { addGate(GateType.T, qubits); }
 
+    /**
+     * Applies phase shift gate R to the supplied qubit/s
+     * @param phi phase shift in radians.
+     * @param qubits qubits to which this gate will be applied to.
+     */
+    public void R(float phi, int... qubits) { addGate(GateType.R, phi, qubits); }
+
 
     /**
      * Applies controlled X gate to the supplied control and target qubits.
@@ -167,6 +174,17 @@ public class Circuit {
         addControlGate(targetGate, controlQubit, targetQubit);
     }
 
+    /**
+     * Applies controlled phase shift gate R to the supplied control and target qubits.
+     * @param controlQubit control qubit for this controlled gate.
+     * @param targetQubit target qubit for this controlled gate.
+     * @param phi phase shift in radians.
+     */
+    public void CR(int controlQubit, int targetQubit, float phi) {
+        Gate targetGate = new Gate(GateType.R, targetQubit, phi);
+        addControlGate(targetGate, controlQubit, targetQubit);
+    }
+
 
     /**
      * Applies swap function to the supplied qubits.
@@ -222,6 +240,13 @@ public class Circuit {
             throw new IllegalArgumentException("Invalid qubit / qubits supplied.");
         for (int qubit : qubits)
             addOperation(new Gate(type, qubit));
+    }
+
+    private void addGate(GateType type, float phi, int... qubits) {
+        if (!areQubitsValid(qubits))
+            throw new IllegalArgumentException("Invalid qubit / qubits supplied.");
+        for (int qubit : qubits)
+            addOperation(new Gate(type, qubit, phi));
     }
 
     private void addControlGate(Gate gate, int controlQubit, int targetQubit) {
