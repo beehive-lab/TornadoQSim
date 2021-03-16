@@ -100,7 +100,7 @@ public class CircuitTest {
         // Build circuit from functions only
         OperationDataProvider.getInstance().registerFunctionData("custom", new ComplexTensor(2,2));
         Circuit circuit = new Circuit(4);
-        circuit.swap(0,1);
+        circuit.swap(0,2);
         circuit.customFunction("custom",0,0);
 
         // Check circuit properties
@@ -112,7 +112,7 @@ public class CircuitTest {
         List<Step> steps = circuit.getSteps();
         FunctionType[] types;
 
-        types = new FunctionType[] { FunctionType.Swap, FunctionType.Swap, null, null };
+        types = new FunctionType[] { FunctionType.Swap, FunctionType.Swap, FunctionType.Swap, null };
         assertStep(steps.get(0), types);
 
         types = new FunctionType[] { FunctionType.Custom, null, null, null };
@@ -120,7 +120,6 @@ public class CircuitTest {
 
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(3, 4));
-        assertThrows(IllegalArgumentException.class, () -> circuit.swap(1, 3));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",2, 10));
         assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("invalid",2, 3));

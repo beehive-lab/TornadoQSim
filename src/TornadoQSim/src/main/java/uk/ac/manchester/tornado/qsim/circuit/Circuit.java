@@ -148,13 +148,11 @@ public class Circuit {
 
 
     /**
-     * Applies swap function to the supplied adjacent qubits.
+     * Applies swap function to the supplied qubits.
      * @param qubitA qubit to be swapped.
      * @param qubitB qubit to be swapped.
      */
     public void swap(int qubitA, int qubitB) {
-        if (!areQubitsAdjacent(qubitA, qubitB))
-            throw new IllegalArgumentException("Non-adjancent qubits supplied for swap operation.");
         addFunction(FunctionType.Swap, qubitA, qubitB);
     }
 
@@ -235,9 +233,5 @@ public class Circuit {
             if (qubit < 0 || qubit > noQubits - 1)
                 return false;
         return true;
-    }
-
-    private boolean areQubitsAdjacent(int qubitA, int qubitB) {
-        return qubitA + 1 == qubitB || qubitA - 1 == qubitB;
     }
 }
