@@ -84,11 +84,11 @@ public class Gate implements Operation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Gate gate = (Gate) o;
-        return target == gate.target && type == gate.type;
+        return target == gate.target && Float.compare(gate.phi, phi) == 0 && type == gate.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, target);
+        return Objects.hash(type, target, phi);
     }
 }
