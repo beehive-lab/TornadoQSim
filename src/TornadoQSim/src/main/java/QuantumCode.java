@@ -5,32 +5,50 @@ import uk.ac.manchester.tornado.qsim.simulator.unitary.UnitarySimulatorStandard;
 
 import java.util.Arrays;
 
+/**
+ * Example usecase of the TornadoQSim framework
+ * Run using: tornado QuantumCode
+ * @author Ales Kubicek
+ */
 public class QuantumCode {
 
-    private static final int WARMING_UP_ITERATIONS = 0;
-    private static final int TIMING_ITERATIONS = 1;
+    private static final int WARMING_UP_ITERATIONS = 10;
+    private static final int TIMING_ITERATIONS = 30;
 
     public static void main(String[] args) {
-        // Replace with UnitarySimulatorStandard() for non-accelerated simulation
-        Simulator simulator = new UnitarySimulatorAccelerated();
 
-        // Some random quantum circuit - feel free to:
-        // --> adjust the circuit size (number of qubits)
-        // --> adjust the quantum operations
-        Circuit circuit = new Circuit(5);
+        int noQubits = 7;
 
-        circuit.H(0,1,2,3,4);
+        // Example circuit - fully entangled
+        Circuit circuit = new Circuit(noQubits);
+
+        circuit.H(0);
+        circuit.CNOT(0,6);
+        circuit.CNOT(0,5);
         circuit.CNOT(0,4);
-        circuit.CNOT(4,0);
-        circuit.X(0);
-        circuit.Y(1);
-        circuit.Z(2);
-        circuit.H(3);
-        circuit.S(4);
-        circuit.CS(3,4);
-        circuit.H(0,1,2,3,4);
-        circuit.X(0,1,2,3,4);
+        circuit.CNOT(0,3);
+        circuit.CNOT(0,2);
+        circuit.CNOT(0,1);
 
+        // Quantum simulator backends
+        Simulator simAccelerated = new UnitarySimulatorAccelerated(noQubits);
+        Simulator simStandard = new UnitarySimulatorStandard();
+
+        // Evaluation
+        System.out.println("--------- Accelerated --------");
+        simulateAndPrint(simAccelerated, circuit);
+        System.out.println();
+        System.out.println("---------- Standard ----------");
+        simulateAndPrint(simStandard, circuit);
+    }
+
+    /**
+     * Run a simulation of the supplied circuit in two phases: warm-up and timing.
+     * Statistics of the run will be printed out.
+     * @param simulator quantum simulator backend.
+     * @param circuit circuit to be simulated.
+     */
+    private static void simulateAndPrint(Simulator simulator, Circuit circuit) {
         for (int i = 0; i < WARMING_UP_ITERATIONS; i++)
             simulator.simulateFullState(circuit);
 
@@ -44,7 +62,7 @@ public class QuantumCode {
             execTimes[i] = stop - start;
         }
 
+        System.out.println("Simulation statistics:");
         System.out.println(Arrays.stream(execTimes).summaryStatistics());
     }
-
 }
