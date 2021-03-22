@@ -1,13 +1,13 @@
-# TornadoQSim
+# TornadoQSim - Evaluation
 
-Simulator of quantum circuits implemented in Java and accelerated with [TornadoVM](https://www.tornadovm.org/). Developed by Ales Kubicek as part of the 3rd year project at the University of Manchester.
+Three quantum algorithms were chosen to evaluate the performance of the TornadoQSim:
 
-**Planned approach:**
-* Front-end circuit composer 
-* REST API
-* Simulator
-  * Unitary matrix simulator
-  * High order tensor network simulator
-  * Resource estimator
+- Fully entangled quantum circuit
+- Deutsch–Jozsa algorithm
+- Quantum Fourier Transform
 
-Resources and project log: [Google Drive](https://drive.google.com/drive/folders/1KYNkAB-MO8NfLirV5-4TZLUYs5DumlGA) 
+## Performance Graphs
+
+The evaluation results can be found in [graphs/data.py](https://github.com/beehive-lab/TornadoQSim/blob/develop/evaluation/graphs/data.py) and plotted using [graphs/plot_time.py](https://github.com/beehive-lab/TornadoQSim/blob/develop/evaluation/graphs/plot_time.py) and [graphs/plot_memory.py](https://github.com/beehive-lab/TornadoQSim/blob/develop/evaluation/graphs/plot_memory.py).
+
+The performance of other quantum computing frameworks (namely Qiskit, Strange and Cirq) for some of the experiments was included in the data. The implementation of the quantum algorithms using those other frameworks can be found in the appropriate sub-folders.
