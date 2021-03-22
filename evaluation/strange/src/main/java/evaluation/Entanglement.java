@@ -1,3 +1,5 @@
+package evaluation;
+
 import org.redfx.strange.Program;
 import org.redfx.strange.Step;
 import org.redfx.strange.gate.Cnot;

@@ -1,3 +1,5 @@
+package evaluation;
+
 import org.redfx.strange.Program;
 import org.redfx.strange.QuantumExecutionEnvironment;
 
@@ -7,10 +9,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 
+/**
+ * evaluation.Common class to provide utils, such as:
+ * Argument parsing, simulation timing, memory measurement.
+ * @author Ales Kubicek
+ */
 public class Common {
     private static final int WARMUP_ITERATIONS = 0;
     private static final int TIMING_ITERATIONS = 1;
 
+    /**
+     * Parses number of qubits from supplied program arguments.
+     * @param args full program arguments.
+     * @return number of qubits (default = 8).
+     */
     protected static int getQubitCount(String[] args) {
         int noQubits = 8;
         if (args.length >= 1) {
@@ -20,6 +32,12 @@ public class Common {
         return noQubits;
     }
 
+    /**
+     * Simulate supplied quantum circuit on supplied quantum simulator.
+     * Including timing and peak memory measurement.
+     * @param environment quantum environment.
+     * @param program quantum program to be simulated.
+     */
     protected static void simulateAndPrint(QuantumExecutionEnvironment environment, Program program) {
         for (int i = 0; i < WARMUP_ITERATIONS; i++)
             environment.runProgram(program);
