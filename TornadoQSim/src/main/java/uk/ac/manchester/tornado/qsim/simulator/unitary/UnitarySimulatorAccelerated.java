@@ -10,6 +10,12 @@ import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Represents a quantum circuit simulator that composes a unitary matrix for each step of the circuit in order
+ * to simulated the final state. The simulation process is accelerated on heterogeneous hardware via TornadoVM. This
+ * simulation process follows the standard mathematical model of quantum computation.
+ * @author Ales Kubicek
+ */
 public class UnitarySimulatorAccelerated implements Simulator {
     private final UnitaryDataProvider dataProvider;
 
