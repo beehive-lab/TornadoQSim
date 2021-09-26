@@ -83,7 +83,7 @@ public class Function implements Operation {
 
     @Override
     public OperationType operationType() {
-        return type == FunctionType.Custom ? OperationType.CustomFunction : OperationType.Funciton;
+        return type == FunctionType.Custom ? OperationType.CustomFunction : OperationType.Function;
     }
 
     @Override

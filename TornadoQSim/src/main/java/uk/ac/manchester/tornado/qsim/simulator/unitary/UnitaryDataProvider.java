@@ -37,7 +37,7 @@ class UnitaryDataProvider {
                 return constructGateData((Gate)operation);
             case ControlGate:
                 return constructControlGateData((ControlGate)operation);
-            case Funciton:
+            case Function:
                 return constructFunctionData((Function)operation);
             case CustomFunction:
                 return constructCustomFunctionData((Function)operation);
