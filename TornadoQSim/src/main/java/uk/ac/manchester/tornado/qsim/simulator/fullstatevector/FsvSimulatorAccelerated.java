@@ -87,14 +87,16 @@ public class FsvSimulatorAccelerated implements Simulator {
                 .task("applyGateTask", FsvOperand::applyGate,
                         targetQubit, stateReal, stateImag, halfRows,
                         maReal, maImag, mbReal, mbImag,
-                        mcReal, mcImag, mdReal, mdImag);
+                        mcReal, mcImag, mdReal, mdImag)
+                .streamOut(stateReal, stateImag);
 
-        applyControlGateSchedule = (TaskSchedule) new TaskSchedule("applyControlGate")
-                .task("applyControlGateTask", FsvOperand::applyControlGate,
-                        targetQubit, controlQubit,
-                        stateReal, stateImag, halfRows,
-                        maReal, maImag, mbReal, mbImag,
-                        mcReal, mcImag, mdReal, mdImag);
+//        applyControlGateSchedule = (TaskSchedule) new TaskSchedule("applyControlGate")
+//                .task("applyControlGateTask", FsvOperand::applyControlGate,
+//                        targetQubit, controlQubit,
+//                        stateReal, stateImag, halfRows,
+//                        maReal, maImag, mbReal, mbImag,
+//                        mcReal, mcImag, mdReal, mdImag)
+//                .streamOut(stateReal, stateImag);
     }
 
     private void applyGate(Gate gate) {
