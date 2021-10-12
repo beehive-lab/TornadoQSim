@@ -1,6 +1,8 @@
 package evaluation;
 
 import uk.ac.manchester.tornado.qsim.circuit.Circuit;
+import uk.ac.manchester.tornado.qsim.circuit.State;
+import uk.ac.manchester.tornado.qsim.circuit.utils.StateConverter;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 
 import java.lang.management.ManagementFactory;
@@ -33,12 +35,23 @@ public class Common {
     }
 
     /**
-     * Parses acceleration flag from supplied program arguments.
+     * Parses simulator type from supplied program arguments.
      * @param args full program arguments.
-     * @return acceleration flag.
+     * @return simulator type.
      */
-    protected static boolean getAccelerationFlag(String[] args) {
-        return args.length >= 2 && args[1].equals("accelerate");
+    protected static int getSimulatorType(String[] args) {
+        int simulatorType = 3;
+        if (args.length >= 2) {
+            try {
+                simulatorType = Integer.parseInt(args[1]);
+                if (simulatorType < 1 || simulatorType > 4)
+                    throw new NumberFormatException();
+            }
+            catch (NumberFormatException ignored) {
+                System.out.println("Invalid simulator type - circuit will be simulated with default fsv simulator.");
+            }
+        }
+        return simulatorType;
     }
 
     /**
