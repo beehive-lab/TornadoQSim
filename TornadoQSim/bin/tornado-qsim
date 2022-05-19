@@ -1,0 +1,42 @@
+#!/bin/bash
+
+JARS=$(echo ${TORNADO_QSIM_ROOT}/target/classes | tr ' ' ':')
+
+#JFLAGS="--module-path --add-modules"
+
+if [ $# -eq 0 ]; then
+	echo "TornadoVM Quantum Simulator supports four execution modes:"
+        echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
+        echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
+        echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
+        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+elif [ $# -lt 2 ]; then
+	echo "Please enter a number of qubits:"
+        echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
+        echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
+        echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
+        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+elif [ "$1" == "unitary-java" ]; then
+        echo "-----------------------------------------"
+        echo "Running TornadoVM Quantum Simulator with the Unitary Matrix backend (sequential execution)"
+        tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} QuantumCode 1 $2
+elif [ "$1" == "unitary-accel" ]; then
+        echo "-----------------------------------------"
+        echo "Running TornadoVM Quantum Simulator with the Unitary Matrix backend (parallel execution)"
+        tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} --debug --threadInfo QuantumCode 2 $2
+elif [ "$1" == "fsv-java" ]; then
+	echo "-----------------------------------------"
+	echo "Running TornadoVM Quantum Simulator with the Full State Vector backend (sequential execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} --debug --threadInfo QuantumCode 3 $2	
+elif [ "$1" == "fsv-accel" ]; then
+	echo "-----------------------------------------"
+	echo "Running TornadoVM Quantum Simulator with the Full State Vector backend (parallel execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} --debug --threadInfo QuantumCode 4 $2
+else
+	echo "Please run:"
+	echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
+	echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
+	echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
+	echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+fi
+
