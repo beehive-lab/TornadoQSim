@@ -11,31 +11,28 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.Operation;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents a quantum circuit simulator that applies each quantum gate by iterating over the full state vector.
- * The simulation process is accelerated on heterogeneous hardware via TornadoVM. This simulation process follows the
+ * Represents a quantum circuit simulator that applies each quantum gate by
+ * iterating over the full state vector. The simulation process is accelerated
+ * on heterogeneous hardware via TornadoVM. This simulation process follows the
  * full state vector / wavefunction simulation model of quantum computation.
+ * 
  * @author Ales Kubicek
  */
 public class FsvSimulatorAccelerated implements Simulator {
     private final FsvDataProvider dataProvider;
 
-    private TaskSchedule applyGateSchedule, applyControlGateSchedule;
-
-    private final int noQubits;
-    private State state;
-    private int targetQubit, controlQubit;
-    private float maReal, maImag, mbReal, mbImag, mcReal, mcImag, mdReal, mdImag;
+    private TaskSchedule applyGateSchedule;
+    private TaskSchedule applyControlGateSchedule;
 
     /**
      * Constructs a full state vector simulator.
      */
     public FsvSimulatorAccelerated(int noQubits) {
         dataProvider = new FsvDataProvider();
-        this.noQubits = noQubits;
-        prepareTaskSchedules();
     }
 
     @Override
@@ -43,6 +40,7 @@ public class FsvSimulatorAccelerated implements Simulator {
         if (circuit == null)
             throw new IllegalArgumentException("Invalid circuit supplied (NULL).");
 
+        State resultState = new State(circuit.qubitCount());
         List<Step> steps = circuit.getSteps();
 
         for (Step step : steps) {
@@ -50,25 +48,23 @@ public class FsvSimulatorAccelerated implements Simulator {
             for (Operation operation : operations) {
                 switch (operation.operationType()) {
                     case Gate:
-                        applyGate((Gate)operation);
+                        applyGate(resultState, (Gate) operation);
                         break;
                     case ControlGate:
-                        applyControlGate((ControlGate)operation);
+                        applyControlGate(resultState, (ControlGate) operation);
                         break;
                     case Function:
-                        applyStandardFunction((Function)operation);
+                        applyStandardFunction(resultState, (Function) operation);
                         break;
                     case CustomFunction:
-                        applyCustomFunction((Function)operation);
+                        applyCustomFunction(resultState, (Function) operation);
                         break;
                     default:
-                        throw new UnsupportedOperationException("Operation type '"
-                                + operation.operationType()
-                                + "' is not supported in a full state vector simulator.");
+                        throw new UnsupportedOperationException("Operation type '" + operation.operationType() + "' is not supported in a full state vector simulator.");
                 }
             }
         }
-        return state;
+        return resultState;
     }
 
     @Override
@@ -76,66 +72,74 @@ public class FsvSimulatorAccelerated implements Simulator {
         return simulateFullState(circuit).collapse();
     }
 
-    private void prepareTaskSchedules() {
-        state = new State(noQubits);
-        int halfRows = state.size() / 2;
-
-        float[] stateReal = state.getStateVector().getRawRealData();
-        float[] stateImag = state.getStateVector().getRawImagData();
-
-        applyGateSchedule = new TaskSchedule("applyGate")
-                .task("applyGateTask", FsvOperand::applyGate,
-                        targetQubit, stateReal, stateImag, halfRows,
-                        maReal, maImag, mbReal, mbImag,
-                        mcReal, mcImag, mdReal, mdImag)
-                .streamOut(stateReal, stateImag);
-
-//        applyControlGateSchedule = (TaskSchedule) new TaskSchedule("applyControlGate")
-//                .task("applyControlGateTask", FsvOperand::applyControlGate,
-//                        targetQubit, controlQubit,
-//                        stateReal, stateImag, halfRows,
-//                        maReal, maImag, mbReal, mbImag,
-//                        mcReal, mcImag, mdReal, mdImag)
-//                .streamOut(stateReal, stateImag);
-    }
-
-    private void applyGate(Gate gate) {
-        targetQubit = gate.targetQubit();
-
-        ComplexTensor gateData = dataProvider.getOperationData(gate);
-        maReal = gateData.getElement(0, 0).real();
-        maImag = gateData.getElement(0, 0).imag();
-        mbReal = gateData.getElement(0, 1).real();
-        mbImag = gateData.getElement(0, 1).imag();
-        mcReal = gateData.getElement(1, 0).real();
-        mcImag = gateData.getElement(1, 0).imag();
-        mdReal = gateData.getElement(1, 1).real();
-        mdImag = gateData.getElement(1, 1).imag();
+    private void applyGate(State state, Gate gate) {
+        applyGateSchedule = buildJitTaskSchedule(state, gate);
         applyGateSchedule.execute();
     }
 
-    private void applyControlGate(ControlGate controlGate) {
-        targetQubit = controlGate.targetQubit();
-        controlQubit = controlGate.controlQubit();
+    private TaskSchedule buildJitTaskSchedule(State state, Gate gate) {
+        int halfRows = state.size() / 2;
+        ComplexTensor gateData = dataProvider.getOperationData(gate);
+        // TODO: arraycopy from ComplexTensor raw data
+        float[] gateRealTmp = new float[] { //
+                gateData.getElement(0, 0).real(), //
+                gateData.getElement(0, 1).real(), //
+                gateData.getElement(1, 0).real(), //
+                gateData.getElement(1, 1).real(), //
+        };
+        float[] gateImagTmp = new float[] { //
+                gateData.getElement(0, 0).imag(), //
+                gateData.getElement(0, 1).imag(), //
+                gateData.getElement(1, 0).imag(), //
+                gateData.getElement(1, 1).imag(), //
+        };
 
-        ComplexTensor gateData = dataProvider.getOperationData(controlGate);
-        maReal = gateData.getElement(0, 0).real();
-        maImag = gateData.getElement(0, 0).imag();
-        mbReal = gateData.getElement(0, 1).real();
-        mbImag = gateData.getElement(0, 1).imag();
-        mcReal = gateData.getElement(1, 0).real();
-        mcImag = gateData.getElement(1, 0).imag();
-        mdReal = gateData.getElement(1, 1).real();
-        mdImag = gateData.getElement(1, 1).imag();
+        // @formatter:off
+        TaskSchedule taskSchedule = new TaskSchedule("applyGate")
+                .streamIn(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp)
+                .task("applyGateTask", FsvOperand::applyGate, gate.targetQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateRealTmp, gateImagTmp)
+                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp);
+        // @formatter:on
+        return taskSchedule;
+    }
+
+    private TaskSchedule buildJitTaskSchedule(State state, ControlGate gate) {
+        int halfRows = state.size() / 2;
+        ComplexTensor gateData = dataProvider.getOperationData(gate);
+        // TODO: arraycopy from ComplexTensor raw data
+        float[] gateRealTmp = new float[] { //
+                gateData.getElement(0, 0).real(), //
+                gateData.getElement(0, 1).real(), //
+                gateData.getElement(1, 0).real(), //
+                gateData.getElement(1, 1).real(), //
+        };
+        float[] gateImagTmp = new float[] { //
+                gateData.getElement(0, 0).imag(), //
+                gateData.getElement(0, 1).imag(), //
+                gateData.getElement(1, 0).imag(), //
+                gateData.getElement(1, 1).imag(), //
+        };
+
+        // @formatter:off
+        TaskSchedule taskSchedule = new TaskSchedule("applyControlGate")
+                .streamIn(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp)
+                .task("applyControlGateTask", FsvOperand::applyControlGate, gate.targetQubit(), gate.controlQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateRealTmp, gateImagTmp)
+                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp);
+        // @formatter:on
+        return taskSchedule;
+    }
+
+    private void applyControlGate(State state, ControlGate controlGate) {
+        applyControlGateSchedule = buildJitTaskSchedule(state, controlGate);
         applyControlGateSchedule.execute();
     }
 
-    private void applyStandardFunction(Function standardFunction) {
+    private void applyStandardFunction(State state, Function standardFunction) {
         // TODO: implement data generation for standard functions
         throw new UnsupportedOperationException("Standard functions are not yet supported.");
     }
 
-    private void applyCustomFunction(Function customFunction) {
+    private void applyCustomFunction(State state, Function customFunction) {
         // TODO: implement data generation for custom functions
         throw new UnsupportedOperationException("Custom functions are not yet supported.");
     }
