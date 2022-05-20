@@ -98,7 +98,7 @@ public class FsvSimulatorAccelerated implements Simulator {
         TaskSchedule taskSchedule = new TaskSchedule("applyGate")
                 .streamIn(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp)
                 .task("applyGateTask", FsvOperand::applyGate, gate.targetQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateRealTmp, gateImagTmp)
-                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp);
+                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData());
         // @formatter:on
         return taskSchedule;
     }
@@ -124,7 +124,7 @@ public class FsvSimulatorAccelerated implements Simulator {
         TaskSchedule taskSchedule = new TaskSchedule("applyControlGate")
                 .streamIn(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp)
                 .task("applyControlGateTask", FsvOperand::applyControlGate, gate.targetQubit(), gate.controlQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateRealTmp, gateImagTmp)
-                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateRealTmp, gateImagTmp);
+                .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData());
         // @formatter:on
         return taskSchedule;
     }
