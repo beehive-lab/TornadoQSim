@@ -29,13 +29,13 @@ class FsvOperand {
      *            matrix.
      */
 
-    protected static void applyGate(int targetQubit, float[] real, float[] imag, final int halfRows, float[] gateReal, float[] gateImag) {
+    protected static void applyGate(int[] targetQubit, float[] real, float[] imag, final int halfRows, float[] gateReal, float[] gateImag) {
         for (@Parallel int i = 0; i < halfRows; i++) {
-            int maskRight = (1 << targetQubit) - 1;
+            int maskRight = (1 << targetQubit[0]) - 1;
             int maskLeft = ~maskRight;
 
             int a = (i & maskRight) | ((i & maskLeft) << 1);
-            int b = a | (1 << targetQubit);
+            int b = a | (1 << targetQubit[0]);
 
             float valueAReal = real[a];
             float valueAImag = imag[a];
@@ -70,15 +70,15 @@ class FsvOperand {
      *            imaginary part of the components A, B, C and D of the unitary
      *            matrix.
      */
-    protected static void applyControlGate(int targetQubit, int controlQubit, float[] real, float[] imag, final int halfRows, float[] gateReal, float[] gateImag) {
+    protected static void applyControlGate(int[] targetQubit, int[] controlQubit, float[] real, float[] imag, final int halfRows, float[] gateReal, float[] gateImag) {
         for (@Parallel int i = 0; i < halfRows; i++) {
-            int maskRight = (1 << targetQubit) - 1;
+            int maskRight = (1 << targetQubit[0]) - 1;
             int maskLeft = ~maskRight;
 
             int a = (i & maskRight) | ((i & maskLeft) << 1);
-            int b = a | (1 << targetQubit);
+            int b = a | (1 << targetQubit[0]);
 
-            if (((1 << controlQubit) & a) > 0) {
+            if (((1 << controlQubit[0]) & a) > 0) {
                 float valueAReal = real[a];
                 float valueAImag = imag[a];
                 float valueBReal = real[b];
