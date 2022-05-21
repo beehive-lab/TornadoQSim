@@ -29,7 +29,7 @@ public class FsvSimulatorAccelerated implements Simulator {
     private TaskSchedule applyControlGateSchedule;
 
     private int[] targetQubit;
-    private int[] targetControlQubit;
+    private int[] controlQubit;
     private float[] gateReal;
     private float[] gateImag;
     private float[] stateReal;
@@ -40,6 +40,17 @@ public class FsvSimulatorAccelerated implements Simulator {
      */
     public FsvSimulatorAccelerated(int noQubits) {
         dataProvider = new FsvDataProvider();
+        targetQubit = new int[1];
+        controlQubit = new int[1];
+    }
+
+    private void initializeStateArrays(State state) {
+        if (stateReal == null) {
+            stateReal = new float[state.getStateVector().getRawRealData().length];
+        }
+        if (stateImag == null) {
+            stateImag = new float[state.getStateVector().getRawImagData().length];
+        }
     }
 
     @Override
@@ -49,6 +60,8 @@ public class FsvSimulatorAccelerated implements Simulator {
 
         State resultState = new State(circuit.qubitCount());
         List<Step> steps = circuit.getSteps();
+
+        initializeStateArrays(resultState);
 
         for (Step step : steps) {
             List<Operation> operations = dataProvider.getStepOperations(circuit.qubitCount(), step);
@@ -93,16 +106,6 @@ public class FsvSimulatorAccelerated implements Simulator {
 
         // @formatter:off
         if (applyGateSchedule == null) {
-            if (targetQubit == null) {
-                targetQubit = new int[1];
-            }
-            if (stateReal == null) {
-                stateReal = new float[state.getStateVector().getRawRealData().length];
-            }
-            if (stateImag == null) {
-                stateImag = new float[state.getStateVector().getRawImagData().length];
-            }
-            
             targetQubit[0] = gate.targetQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
@@ -150,21 +153,8 @@ public class FsvSimulatorAccelerated implements Simulator {
 
         // @formatter:off
         if (applyControlGateSchedule == null) {
-            if (targetQubit == null) {
-                targetQubit = new int[1];
-            }
-            if (targetControlQubit == null) {
-                targetControlQubit = new int[1];
-            }
-            if (stateReal == null) {
-                stateReal = new float[state.getStateVector().getRawRealData().length];
-            }
-            if (stateImag == null) {
-                stateImag = new float[state.getStateVector().getRawImagData().length];
-            }
-
             targetQubit[0] = gate.targetQubit()[0];
-            targetControlQubit[0] = gate.controlQubit()[0];
+            controlQubit[0] = gate.controlQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
             // stateReal = state.getStateVector().getRawRealData();
@@ -173,22 +163,22 @@ public class FsvSimulatorAccelerated implements Simulator {
                     gateData.getElement(0, 0).real(), //
                     gateData.getElement(0, 1).real(), //
                     gateData.getElement(1, 0).real(), //
-                    gateData.getElement(1, 1).real() //
+                    gateData.getElement(1, 1).real()  //
             };
             gateImag = new float[] { //
                     gateData.getElement(0, 0).imag(), //
                     gateData.getElement(0, 1).imag(), //
                     gateData.getElement(1, 0).imag(), //
-                    gateData.getElement(1, 1).imag() //
+                    gateData.getElement(1, 1).imag()  //
             };
 
             applyControlGateSchedule = new TaskSchedule("applyControlGate")
                     .streamIn(targetQubit, stateReal, stateImag, gateReal, gateImag)
-                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, gate.controlQubit(), stateReal, stateImag, halfRows, gateReal, gateImag)
+                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
                     .streamOut(stateReal, stateImag);
         } else {
             targetQubit[0] = gate.targetQubit()[0];
-            targetControlQubit[0] = gate.controlQubit()[0];
+            controlQubit[0] = gate.controlQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
             gateReal[0] = gateData.getElement(0, 0).real();
@@ -206,6 +196,8 @@ public class FsvSimulatorAccelerated implements Simulator {
     private void applyControlGate(State state, ControlGate controlGate) {
         buildJitTaskSchedule(state, controlGate);
         applyControlGateSchedule.execute();
+        System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
+        System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
     }
 
     private void applyStandardFunction(State state, Function standardFunction) {
