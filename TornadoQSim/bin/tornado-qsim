@@ -9,13 +9,13 @@ if [ $# -eq 0 ]; then
         echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
         echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
         echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
-        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector."
 elif [ $# -lt 2 ]; then
 	echo "Please enter a number of qubits:"
         echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
         echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
         echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
-        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+        echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector."
 elif [ "$1" == "unitary-java" ]; then
         echo "-----------------------------------------"
         echo "Running TornadoVM Quantum Simulator with the Unitary Matrix backend (sequential execution)"
@@ -37,6 +37,6 @@ else
 	echo "tornado-qsim unitary-java  <num_of_qubits>  for sequential execution with Unitary Matrix."
 	echo "tornado-qsim unitary-accel <num_of_qubits>  for parallel execution with Unitary Matrix."
 	echo "tornado-qsim fsv-java      <num_of_qubits>  for sequential execution with Full State Vector."
-	echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector"
+	echo "tornado-qsim fsv-accel     <num_of_qubits>  for parallel execution with Full State Vector."
 fi
 
