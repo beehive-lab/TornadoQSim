@@ -10,7 +10,9 @@ import java.util.Arrays;
 
 /**
  * Example usecase of the TornadoQSim framework
+ * 
  * Run using: tornado QuantumCode
+ * 
  * @author Ales Kubicek
  */
 public class QuantumCode {
@@ -50,34 +52,37 @@ public class QuantumCode {
     private static Circuit GetCircuitA(int noQubits) {
         Circuit circuit = new Circuit(noQubits);
 
-        circuit.H(0, 2);
+        circuit.H(0, 1, 2);
 
-//        circuit.H(0);
-//        circuit.Y(0);
-//        circuit.Z(0);
+        circuit.CNOT(0, 2);
 
-//        for (int qubit = 0; qubit < noQubits; qubit++)
-//            circuit.H(qubit);
-//
-//        circuit.Y(0);
-//        for (int qubit = 1; qubit < noQubits-1; qubit++)
-//            circuit.Z(qubit);
-//        circuit.Y(noQubits-1);
+        circuit.H(0);
+        circuit.Y(0);
+        circuit.Z(0);
 
-//        for (int targetQubit = circuit.qubitCount() - 1; targetQubit >= 0; targetQubit--) {
-//            circuit.H(targetQubit);
-//            for (int controlQubit = 0; controlQubit < targetQubit; controlQubit++) {
-//                int k = targetQubit - controlQubit;
-//                circuit.CR(controlQubit, targetQubit, (float)(Math.PI / Math.pow(2, k)));
-//            }
-//        }
+        // for (int qubit = 0; qubit < noQubits; qubit++)
+        // circuit.H(qubit);
+        //
+        // circuit.Y(0);
+        // for (int qubit = 1; qubit < noQubits-1; qubit++)
+        // circuit.Z(qubit);
+        // circuit.Y(noQubits-1);
 
-//        for (int qubitA = 0; qubitA < circuit.qubitCount() / 2; qubitA++) {
-//            int qubitB = circuit.qubitCount() - qubitA - 1;
-//            circuit.CNOT(qubitA, qubitB);
-//            circuit.CNOT(qubitB, qubitA);
-//            circuit.CNOT(qubitA, qubitB);
-//        }
+        // for (int targetQubit = circuit.qubitCount() - 1; targetQubit >= 0;
+        // targetQubit--) {
+        // circuit.H(targetQubit);
+        // for (int controlQubit = 0; controlQubit < targetQubit; controlQubit++) {
+        // int k = targetQubit - controlQubit;
+        // circuit.CR(controlQubit, targetQubit, (float)(Math.PI / Math.pow(2, k)));
+        // }
+        // }
+
+        // for (int qubitA = 0; qubitA < circuit.qubitCount() / 2; qubitA++) {
+        // int qubitB = circuit.qubitCount() - qubitA - 1;
+        // circuit.CNOT(qubitA, qubitB);
+        // circuit.CNOT(qubitB, qubitA);
+        // circuit.CNOT(qubitA, qubitB);
+        // }
 
         return circuit;
     }
@@ -85,14 +90,17 @@ public class QuantumCode {
     /**
      * Run a simulation of the supplied circuit in two phases: warm-up and timing.
      * Statistics of the run will be printed out.
-     * @param simulator quantum simulator backend.
-     * @param circuit circuit to be simulated.
+     * 
+     * @param simulator
+     *            quantum simulator backend.
+     * @param circuit
+     *            circuit to be simulated.
      */
     private static void simulateAndPrint(Simulator simulator, Circuit circuit) {
         for (int i = 0; i < WARMING_UP_ITERATIONS; i++)
             simulator.simulateFullState(circuit);
 
-        long start, stop;
+        long start,stop;
         long[] execTimes = new long[TIMING_ITERATIONS];
         State state = null;
         for (int i = 0; i < TIMING_ITERATIONS; i++) {
