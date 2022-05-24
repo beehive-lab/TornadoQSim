@@ -11,7 +11,6 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.Operation;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,6 +33,8 @@ public class FsvSimulatorAccelerated implements Simulator {
     private float[] gateImag;
     private float[] stateReal;
     private float[] stateImag;
+    private float[] stateRealControl;
+    private float[] stateImagControl;
 
     /**
      * Constructs a full state vector simulator.
@@ -50,6 +51,12 @@ public class FsvSimulatorAccelerated implements Simulator {
         }
         if (stateImag == null) {
             stateImag = new float[state.getStateVector().getRawImagData().length];
+        }
+        if (stateRealControl == null) {
+            stateRealControl = new float[state.getStateVector().getRawRealData().length];
+        }
+        if (stateImagControl == null) {
+            stateImagControl = new float[state.getStateVector().getRawImagData().length];
         }
     }
 
@@ -93,111 +100,90 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void applyGate(State state, Gate gate) {
-        buildJitTaskSchedule(state, gate);
+        updateInputDataOfTaskSchedule(state, gate);
         applyGateSchedule.execute();
-        System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
-        System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
+        updateOutputDataOfGate(state);
     }
 
-    private void buildJitTaskSchedule(State state, Gate gate) {
+    private void updateInputDataOfTaskSchedule(State state, Gate gate) {
         int halfRows = state.size() / 2;
         ComplexTensor gateData = dataProvider.getOperationData(gate);
-        // TODO: arraycopy from ComplexTensor raw data
 
-        // @formatter:off
         if (applyGateSchedule == null) {
-            targetQubit[0] = gate.targetQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
-//            stateReal = state.getStateVector().getRawRealData();
-//            stateImag = state.getStateVector().getRawImagData();
-            gateReal = new float[] { //
-                    gateData.getElement(0, 0).real(), //
-                    gateData.getElement(0, 1).real(), //
-                    gateData.getElement(1, 0).real(), //
-                    gateData.getElement(1, 1).real()  //
-            };
-            gateImag = new float[] { //
-                    gateData.getElement(0, 0).imag(), //
-                    gateData.getElement(0, 1).imag(), //
-                    gateData.getElement(1, 0).imag(), //
-                    gateData.getElement(1, 1).imag()  //
-            };
-            
+            if (gateReal == null) {
+                gateReal = new float[gateData.size()];
+            }
+            if (gateImag == null) {
+                gateImag = new float[gateData.size()];
+            }
+            System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
+            System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
+
+            // @formatter:off
             applyGateSchedule = new TaskSchedule("applyGate")
                     .streamIn(targetQubit, stateReal, stateImag, gateReal, gateImag)
                     .task("applyGateTask", FsvOperand::applyGate, targetQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
                     .streamOut(stateReal, stateImag);
+            // @formatter:on
         } else {
             targetQubit[0] = gate.targetQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
-//            stateReal = state.getStateVector().getRawRealData();
-//            stateImag = state.getStateVector().getRawImagData();
-            gateReal[0] = gateData.getElement(0, 0).real();
-            gateReal[1] = gateData.getElement(0, 1).real();
-            gateReal[2] = gateData.getElement(1, 0).real();
-            gateReal[3] = gateData.getElement(1, 1).real();
-            gateImag[0] = gateData.getElement(0, 0).imag();
-            gateImag[1] = gateData.getElement(0, 1).imag();
-            gateImag[2] = gateData.getElement(1, 0).imag();
-            gateImag[3] = gateData.getElement(1, 1).imag();
+            System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
+            System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
         }
-        // @formatter:on
     }
 
-    private void buildJitTaskSchedule(State state, ControlGate gate) {
-        int halfRows = state.size() / 2;
-        ComplexTensor gateData = dataProvider.getOperationData(gate);
-        // TODO: arraycopy from ComplexTensor raw data
-
-        // @formatter:off
-        if (applyControlGateSchedule == null) {
-            targetQubit[0] = gate.targetQubit()[0];
-            controlQubit[0] = gate.controlQubit()[0];
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
-            // stateReal = state.getStateVector().getRawRealData();
-            // stateImag = state.getStateVector().getRawImagData();
-            gateReal = new float[] { //
-                    gateData.getElement(0, 0).real(), //
-                    gateData.getElement(0, 1).real(), //
-                    gateData.getElement(1, 0).real(), //
-                    gateData.getElement(1, 1).real()  //
-            };
-            gateImag = new float[] { //
-                    gateData.getElement(0, 0).imag(), //
-                    gateData.getElement(0, 1).imag(), //
-                    gateData.getElement(1, 0).imag(), //
-                    gateData.getElement(1, 1).imag()  //
-            };
-
-            applyControlGateSchedule = new TaskSchedule("applyControlGate")
-                    .streamIn(targetQubit, stateReal, stateImag, gateReal, gateImag)
-                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
-                    .streamOut(stateReal, stateImag);
-        } else {
-            targetQubit[0] = gate.targetQubit()[0];
-            controlQubit[0] = gate.controlQubit()[0];
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
-            gateReal[0] = gateData.getElement(0, 0).real();
-            gateReal[1] = gateData.getElement(0, 1).real();
-            gateReal[2] = gateData.getElement(1, 0).real();
-            gateReal[3] = gateData.getElement(1, 1).real();
-            gateImag[0] = gateData.getElement(0, 0).imag();
-            gateImag[1] = gateData.getElement(0, 1).imag();
-            gateImag[2] = gateData.getElement(1, 0).imag();
-            gateImag[3] = gateData.getElement(1, 1).imag();
-        }
-        // @formatter:on
+    private void updateOutputDataOfGate(State state) {
+        System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
+        System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
     }
 
     private void applyControlGate(State state, ControlGate controlGate) {
-        buildJitTaskSchedule(state, controlGate);
+        updateInputDataOfTaskSchedule(state, controlGate);
         applyControlGateSchedule.execute();
-        System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
-        System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
+        updateOutputDataOfControlGate(state);
+    }
+
+    private void updateInputDataOfTaskSchedule(State state, ControlGate gate) {
+        int halfRows = state.size() / 2;
+        ComplexTensor gateData = dataProvider.getOperationData(gate);
+
+        if (applyControlGateSchedule == null) {
+            targetQubit[0] = gate.targetQubit()[0];
+            controlQubit[0] = gate.controlQubit()[0];
+            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateRealControl, 0, state.getStateVector().getRawRealData().length);
+            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImagControl, 0, state.getStateVector().getRawImagData().length);
+            if (gateReal == null) {
+                gateReal = new float[gateData.size()];
+            }
+            if (gateImag == null) {
+                gateImag = new float[gateData.size()];
+            }
+            System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
+            System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
+
+            // @formatter:off
+            applyControlGateSchedule = new TaskSchedule("applyControlGate")
+                    .streamIn(targetQubit, stateRealControl, stateImagControl, gateReal, gateImag)
+                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateRealControl, stateImagControl, halfRows, gateReal, gateImag)
+                    .streamOut(stateRealControl, stateImagControl);
+            // @formatter:on
+        } else {
+            targetQubit[0] = gate.targetQubit()[0];
+            controlQubit[0] = gate.controlQubit()[0];
+            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateRealControl, 0, state.getStateVector().getRawRealData().length);
+            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImagControl, 0, state.getStateVector().getRawImagData().length);
+            System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
+            System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
+        }
+    }
+
+    private void updateOutputDataOfControlGate(State state) {
+        System.arraycopy(stateRealControl, 0, state.getStateVector().getRawRealData(), 0, stateRealControl.length);
+        System.arraycopy(stateImagControl, 0, state.getStateVector().getRawImagData(), 0, stateImagControl.length);
     }
 
     private void applyStandardFunction(State state, Function standardFunction) {
