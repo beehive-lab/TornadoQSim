@@ -1,3 +1,5 @@
+package evaluation;
+
 import uk.ac.manchester.tornado.qsim.circuit.Circuit;
 import uk.ac.manchester.tornado.qsim.circuit.State;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
@@ -11,7 +13,7 @@ import java.util.Arrays;
 /**
  * Example usecase of the TornadoQSim framework
  * 
- * Run using: tornado QuantumCode
+ * Run using: tornado evaluation.QuantumCode
  * 
  * @author Ales Kubicek
  */
