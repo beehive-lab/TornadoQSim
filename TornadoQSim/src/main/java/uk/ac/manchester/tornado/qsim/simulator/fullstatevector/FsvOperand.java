@@ -88,7 +88,7 @@ class FsvOperand {
                 imag[a] = (valueAReal * gateImag[0] + valueAImag * gateReal[0]) + (valueBReal * gateImag[1] + valueBImag * gateReal[1]);
 
                 real[b] = (valueAReal * gateReal[2] - valueAImag * gateImag[2]) + (valueBReal * gateReal[3] - valueBImag * gateImag[3]);
-                imag[b] = (valueAReal * gateImag[2] + valueAImag * gateReal[0]) + (valueBReal * gateImag[3] + valueBImag * gateReal[3]);
+                imag[b] = (valueAReal * gateImag[2] + valueAImag * gateReal[2]) + (valueBReal * gateImag[3] + valueBImag * gateReal[3]);
             }
         }
     }
