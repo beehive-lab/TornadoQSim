@@ -6,7 +6,9 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.enums.OperationType;
 import java.util.Objects;
 
 /**
- * Represents a standard quantum logic gate that acts on a single target qubit in the circuit.
+ * Represents a standard quantum logic gate that acts on a single target qubit
+ * in the circuit.
+ * 
  * @author Ales Kubicek
  */
 public class Gate implements Operation {
@@ -16,8 +18,11 @@ public class Gate implements Operation {
 
     /**
      * Constructs a standard quantum logic gate.
-     * @param type type of the standard quantum gate.
-     * @param target qubit to which the standard quatum gate applies.
+     * 
+     * @param type
+     *            type of the standard quantum gate.
+     * @param target
+     *            qubit to which the standard quatum gate applies.
      */
     public Gate(GateType type, int target) {
         if (target < 0)
@@ -31,9 +36,13 @@ public class Gate implements Operation {
 
     /**
      * Constructs a phase shift quantum logic gate.
-     * @param type type of the standard quantum gate.
-     * @param target qubit to which the standard quatum gate applies.
-     * @param phi phase shift in radians.
+     * 
+     * @param type
+     *            type of the standard quantum gate.
+     * @param target
+     *            qubit to which the standard quatum gate applies.
+     * @param phi
+     *            phase shift in radians.
      */
     public Gate(GateType type, int target, float phi) {
         if (target < 0)
@@ -47,19 +56,25 @@ public class Gate implements Operation {
 
     /**
      * Gets the type of the standard quantum gate.
+     * 
      * @return gate type of the quantum gate.
      */
-    public GateType type() { return type; }
+    public GateType type() {
+        return type;
+    }
 
     /**
      * Gets the target qubit.
+     * 
      * @return target qubit.
      */
-    public int targetQubit() { return target; }
+    public int[] targetQubit() {
+        return new int[] { target };
+    }
 
     /**
-     * Gets the phase shift in radians.
-     * Only for 'R' quantum gate.
+     * Gets the phase shift in radians. Only for 'R' quantum gate.
+     * 
      * @return phase shift in radians.
      */
     public float phi() {
@@ -74,15 +89,21 @@ public class Gate implements Operation {
     }
 
     @Override
-    public int size() { return 1; }
+    public int size() {
+        return 1;
+    }
 
     @Override
-    public OperationType operationType() { return OperationType.Gate; }
+    public OperationType operationType() {
+        return OperationType.Gate;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Gate gate = (Gate) o;
         return target == gate.target && Float.compare(gate.phi, phi) == 0 && type == gate.type;
     }

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+JARS=$(echo ${TORNADO_QSIM_ROOT}/target/classes | tr ' ' ':')
+
+CIRCUITS=("QuantumCode" "DeutschJozsa" "Entanglement" "QFT")
+
+if [ $# -eq 0 ]; then
+	echo "TornadoVM Quantum Simulator supports four execution modes:"
+        echo "tornado-qsim unitary-java  <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Unitary Matrix."
+        echo "tornado-qsim unitary-accel <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Unitary Matrix."
+        echo "tornado-qsim fsv-java      <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Full State Vector."
+        echo "tornado-qsim fsv-accel     <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Full State Vector."
+elif [ $# -lt 3 ]; then
+	echo "Please enter a circuit class and a number of qubits as parameters:"
+	echo "tornado-qsim unitary-java  <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Unitary Matrix."
+	echo "tornado-qsim unitary-accel <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Unitary Matrix."
+	echo "tornado-qsim fsv-java      <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Full State Vector."
+	echo "tornado-qsim fsv-accel     <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Full State Vector."
+elif [[ ! " ${CIRCUITS[*]} " =~ " $2 " ]]; then
+	echo "Not valid circuit, please try one of the following: QuantumCode, DeutschJozsa, Entanglement, QFT."
+elif [ "$1" == "unitary-java" ]; then
+	echo "(--------------------- TornadoVM Quantum Simulator ---------------------)"
+	echo "Running $2 circuit with the Unitary Matrix backend (sequential execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} "evaluation/$2" 1 $3
+elif [ "$1" == "unitary-accel" ]; then
+	echo "(--------------------- TornadoVM Quantum Simulator ---------------------)"        
+	echo "Running $2 circuit with the Unitary Matrix backend (parallel execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} evaluation/$2 2 $3
+elif [ "$1" == "fsv-java" ]; then
+	echo "(--------------------- TornadoVM Quantum Simulator ---------------------)"        
+	echo "Running $2 circuit with the Full State Vector backend (sequential execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} evaluation/$2 3 $3
+elif [ "$1" == "fsv-accel" ]; then
+	echo "(--------------------- TornadoVM Quantum Simulator ---------------------)"        
+	echo "Running $2 circuit with the Full State Vector backend (parallel execution)"
+	tornado ${JFLAGS} -classpath ${CLASSPATH}:${JARS} evaluation/$2 4 $3
+else
+	echo "Please run:"
+	echo "tornado-qsim unitary-java  <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Unitary Matrix."
+	echo "tornado-qsim unitary-accel <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Unitary Matrix."
+	echo "tornado-qsim fsv-java      <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Full State Vector."
+	echo "tornado-qsim fsv-accel     <circuit_class> <num_of_qubits>  for parallel execution of a quantum circuit with Full State Vector."
+fi
+

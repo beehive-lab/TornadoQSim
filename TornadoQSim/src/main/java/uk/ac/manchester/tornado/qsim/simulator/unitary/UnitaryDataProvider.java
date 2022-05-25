@@ -10,8 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Provides operation data for unitary matrix simulator. This includes construction of control gate / function
- * unitary matrices.
+ * Provides operation data for unitary matrix simulator. This includes
+ * construction of control gate / function unitary matrices.
+ * 
  * @author Ales Kubicek
  */
 class UnitaryDataProvider {
@@ -19,7 +20,9 @@ class UnitaryDataProvider {
 
     /**
      * Constructs unitary data provider.
-     * @param accelerated flag to switch on / off acceleration (TornadoVM).
+     * 
+     * @param accelerated
+     *            flag to switch on / off acceleration (TornadoVM).
      */
     protected UnitaryDataProvider(boolean accelerated) {
         // Note: accelerated flag provided for evaluation purposes
@@ -28,30 +31,34 @@ class UnitaryDataProvider {
 
     /**
      * Gets unitary matrix for the supplied operation.
-     * @param operation quantum operation.
+     * 
+     * @param operation
+     *            quantum operation.
      * @return unitary matrix representing the quantum operation.
      */
     protected ComplexTensor getOperationData(Operation operation) {
         switch (operation.operationType()) {
             case Gate:
-                return constructGateData((Gate)operation);
+                return constructGateData((Gate) operation);
             case ControlGate:
-                return constructControlGateData((ControlGate)operation);
-            case Funciton:
-                return constructFunctionData((Function)operation);
+                return constructControlGateData((ControlGate) operation);
+            case Function:
+                return constructFunctionData((Function) operation);
             case CustomFunction:
-                return constructCustomFunctionData((Function)operation);
+                return constructCustomFunctionData((Function) operation);
             default:
-                throw new UnsupportedOperationException("Operation type '"
-                        + operation.operationType()
-                        + "' is not supported in a unitary simulator.");
+                throw new UnsupportedOperationException("Operation type '" + operation.operationType() + "' is not supported in a unitary simulator.");
         }
     }
 
     /**
-     * Gets list of all unitary matrices of the operations present in the supplied quantum step.
-     * @param noQubits number of qubits in the supplied step.
-     * @param step single step in a quantum circuit.
+     * Gets list of all unitary matrices of the operations present in the supplied
+     * quantum step.
+     * 
+     * @param noQubits
+     *            number of qubits in the supplied step.
+     * @param step
+     *            single step in a quantum circuit.
      * @return list of all unitary matrices of the step operations.
      */
     protected List<ComplexTensor> getStepOperationData(int noQubits, Step step) {
@@ -63,8 +70,7 @@ class UnitaryDataProvider {
                 Gate identity = new Gate(GateType.I, qubit);
                 operationData.add(OperationDataProvider.getInstance().getData(identity));
                 qubit++;
-            }
-            else {
+            } else {
                 Operation operation = step.getOperation(qubit);
                 operationData.add(getOperationData(operation));
                 qubit += operation.size();
@@ -78,20 +84,18 @@ class UnitaryDataProvider {
     }
 
     private ComplexTensor constructControlGateData(ControlGate controlGate) {
-        int finalSize = (int)Math.pow(2, controlGate.size());
-        ComplexTensor controlGateData = new ComplexTensor(finalSize,finalSize);
+        int finalSize = (int) Math.pow(2, controlGate.size());
+        ComplexTensor controlGateData = new ComplexTensor(finalSize, finalSize);
         ComplexTensor gateData = OperationDataProvider.getInstance().getData(controlGate.gate());
-        int control, target;
-        if (controlGate.controlQubit() > controlGate.targetQubit()) {
+        int control,target;
+        if (controlGate.controlQubit()[0] > controlGate.targetQubit()[0]) {
             control = controlGate.size() - 1;
             target = 0;
-        }
-        else {
+        } else {
             control = 0;
             target = controlGate.size() - 1;
         }
-        buildControlGate(gateData.getRawRealData(), gateData.getRawImagData(), control, target,
-                controlGateData.getRawRealData(), controlGateData.getRawImagData(), finalSize);
+        buildControlGate(gateData.getRawRealData(), gateData.getRawImagData(), control, target, controlGateData.getRawRealData(), controlGateData.getRawImagData(), finalSize);
         return controlGateData;
     }
 
@@ -109,12 +113,8 @@ class UnitaryDataProvider {
 
     private void buildControlGate(float[] gR, float[] gI, int c, int t, float[] rR, float[] rI, int rSize) {
         if (accelerated) {
-            new TaskSchedule("sControlGate")
-                    .task("tBuildControlGate", UnitaryOperand::buildControlGate, gR, gI, c, t, rR, rI, rSize)
-                    .streamOut(rR, rI)
-                    .execute();
-        }
-        else {
+            new TaskSchedule("sControlGate").task("tBuildControlGate", UnitaryOperand::buildControlGate, gR, gI, c, t, rR, rI, rSize).streamOut(rR, rI).execute();
+        } else {
             UnitaryOperand.buildControlGate(gR, gI, c, t, rR, rI, rSize);
         }
     }

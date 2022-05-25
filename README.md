@@ -6,6 +6,62 @@ This framework is developed entirely in Java, including the quantum simulator ba
 
 TornadoQSim was developed by Ales Kubicek as part of the BSc Computer Science degree (final year project) at the University of Manchester.
 
+## Installation
+
+1. Clone the project:
+
+```bash 
+git clone https://github.com/beehive-lab/TornadoQSim.git
+```
+
+2. Install dependencies:
+
+- Install TornadoVM. The following example builds TornadoVM with GraalVM JDK 11 and OpenCL:
+
+```bash
+git clone https://github.com/beehive-lab/TornadoVM.git 
+cd TornadoVM
+./scripts/tornadoVMInstaller.sh --graal-jdk-11 --opencl
+source source.sh
+cd ..
+```
+
+**If you cannot build TornadoVM with the installer, try
+the [manual installation](https://github.com/beehive-lab/TornadoVM/blob/master/assembly/src/docs/12_INSTALL_WITH_JDK11_PLUS.md)
+.**
+
+3. Set up the environment and store the variables in a file (e.g. `sources.env`):
+
+```bash 
+cd TornadoQSim
+vim sources.env
+export TORNADO_QSIM_ROOT="${PWD}/TornadoQSim"
+export PATH="${PATH}:${TORNADO_QSIM_ROOT=}/bin"
+export TORNADO_ROOT=<path to TornadoVM>
+export PATH="${PATH}:${TORNADO_ROOT}/bin/bin/"
+export TORNADO_SDK=${TORNADO_ROOT}/bin/sdk
+export JAVA_HOME=${TORNADO_ROOT}/TornadoVM-OpenJDK11/jdk-11.0.13+8
+```
+
+Load the environment:
+
+```bash
+source sources.env
+cd $TORNADO_QSIM_ROOT
+```
+
+4. Build TornadoQSim:
+
+```bash
+mvn clean install
+```
+
+5. Run TornadoQSim:
+
+```bash
+tornadovm-qsim
+```
+
 ## Usage
 ```java
 // Bell state example

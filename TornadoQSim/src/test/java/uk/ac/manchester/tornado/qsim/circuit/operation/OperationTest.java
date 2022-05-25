@@ -13,23 +13,23 @@ public class OperationTest {
     public void testGate() {
         Gate gate = new Gate(GateType.H, 0);
         assertEquals(GateType.H, gate.type());
-        assertEquals(0, gate.targetQubit());
+        assertEquals(0, gate.targetQubit()[0]);
         assertArrayEquals(new int[] { 0 }, gate.involvedQubits());
         assertEquals(1, gate.size());
 
         assertEquals(new Gate(GateType.H, 0), gate);
 
         assertThrows(IllegalArgumentException.class, () -> new Gate(GateType.X, -1));
-        assertThrows(UnsupportedOperationException.class, () -> new Gate(GateType.X, 0, (float)Math.PI/2));
+        assertThrows(UnsupportedOperationException.class, () -> new Gate(GateType.X, 0, (float) Math.PI / 2));
         assertThrows(UnsupportedOperationException.class, () -> gate.phi());
     }
 
     @Test
     public void testPhaseShiftGate() {
-        Gate gate = new Gate(GateType.R, 0, (float)Math.PI/2);
+        Gate gate = new Gate(GateType.R, 0, (float) Math.PI / 2);
         assertEquals(GateType.R, gate.type());
-        assertEquals((float)Math.PI/2, gate.phi());
-        assertEquals(0, gate.targetQubit());
+        assertEquals((float) Math.PI / 2, gate.phi());
+        assertEquals(0, gate.targetQubit()[0]);
         assertArrayEquals(new int[] { 0 }, gate.involvedQubits());
         assertEquals(1, gate.size());
     }
@@ -38,26 +38,23 @@ public class OperationTest {
     public void testControlGate() {
         ControlGate cGate = new ControlGate(new Gate(GateType.X, 1), 0, 1);
         assertEquals(GateType.X, cGate.gate().type());
-        assertEquals(0, cGate.controlQubit());
-        assertEquals(1, cGate.targetQubit());
+        assertEquals(0, cGate.controlQubit()[0]);
+        assertEquals(1, cGate.targetQubit()[0]);
         assertArrayEquals(new int[] { 0, 1 }, cGate.involvedQubits());
         assertEquals(2, cGate.size());
 
         cGate = new ControlGate(new Gate(GateType.X, 0), 4, 0);
         assertEquals(GateType.X, cGate.gate().type());
-        assertEquals(4, cGate.controlQubit());
-        assertEquals(0, cGate.targetQubit());
+        assertEquals(4, cGate.controlQubit()[0]);
+        assertEquals(0, cGate.targetQubit()[0]);
         assertArrayEquals(new int[] { 0, 1, 2, 3, 4 }, cGate.involvedQubits());
         assertEquals(5, cGate.size());
 
         assertEquals(new ControlGate(new Gate(GateType.X, 0), 4, 0), cGate);
 
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ControlGate(new Gate(GateType.X, 3), 3, 3));
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ControlGate(new Gate(GateType.X, 3), -1, 3));
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ControlGate(new Gate(GateType.X, -1), 3, -1));
+        assertThrows(IllegalArgumentException.class, () -> new ControlGate(new Gate(GateType.X, 3), 3, 3));
+        assertThrows(IllegalArgumentException.class, () -> new ControlGate(new Gate(GateType.X, 3), -1, 3));
+        assertThrows(IllegalArgumentException.class, () -> new ControlGate(new Gate(GateType.X, -1), 3, -1));
     }
 
     @Test
