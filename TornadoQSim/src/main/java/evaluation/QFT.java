@@ -9,13 +9,17 @@ import uk.ac.manchester.tornado.qsim.simulator.unitary.UnitarySimulatorStandard;
 
 /**
  * Evaluate a simulation of Quantum Fourier Transform quantum algorithm.
+ * 
  * @author Ales Kubicek
  */
 public class QFT {
 
     /**
      * Run the evaluation using: "tornado evaluation.QFT".
-     * @param args args[0] - number of qubits in the quantum circuit, args[1] - simulator type (1-4).
+     * 
+     * @param args
+     *            args[0] simulator type (1-4), args[1] - number of qubits in the
+     *            quantum circuit.
      */
     public static void main(String[] args) {
         int noQubits = Common.getQubitCount(args);
@@ -28,9 +32,18 @@ public class QFT {
 
         Simulator simulator = new FsvSimulatorStandard();
         switch (simulatorType) {
-            case 1: simulator = new UnitarySimulatorStandard(); break;
-            case 2: simulator = new UnitarySimulatorAccelerated(noQubits); break;
-            case 4: simulator = new FsvSimulatorAccelerated(noQubits); break;
+            case 1:
+                simulator = new UnitarySimulatorStandard();
+                break;
+            case 2:
+                simulator = new UnitarySimulatorAccelerated(noQubits);
+                break;
+            case 3:
+                simulator = new FsvSimulatorStandard();
+                break;
+            case 4:
+                simulator = new FsvSimulatorAccelerated(noQubits);
+                break;
         }
 
         Common.simulateAndPrint(simulator, circuit);
@@ -45,7 +58,7 @@ public class QFT {
             circuit.H(targetQubit);
             for (int controlQubit = 0; controlQubit < targetQubit; controlQubit++) {
                 int k = targetQubit - controlQubit;
-                circuit.CR(controlQubit, targetQubit, (float)(Math.PI / Math.pow(2, k)));
+                circuit.CR(controlQubit, targetQubit, (float) (Math.PI / Math.pow(2, k)));
             }
         }
     }
