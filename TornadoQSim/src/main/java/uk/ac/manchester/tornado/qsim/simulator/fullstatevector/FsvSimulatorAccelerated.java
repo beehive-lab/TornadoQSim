@@ -110,6 +110,7 @@ public class FsvSimulatorAccelerated implements Simulator {
         ComplexTensor gateData = dataProvider.getOperationData(gate);
 
         if (applyGateSchedule == null) {
+            targetQubit[0] = gate.targetQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
             if (gateReal == null) {
@@ -167,7 +168,7 @@ public class FsvSimulatorAccelerated implements Simulator {
 
             // @formatter:off
             applyControlGateSchedule = new TaskSchedule("applyControlGate")
-                    .streamIn(targetQubit, stateRealControl, stateImagControl, gateReal, gateImag)
+                    .streamIn(targetQubit, controlQubit, stateRealControl, stateImagControl, gateReal, gateImag)
                     .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateRealControl, stateImagControl, halfRows, gateReal, gateImag)
                     .streamOut(stateRealControl, stateImagControl);
             // @formatter:on
