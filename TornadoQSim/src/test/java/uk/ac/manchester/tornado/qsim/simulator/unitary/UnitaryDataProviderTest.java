@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.simulator.unitary;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -20,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UnitaryDataProviderTest {
 
     private static UnitaryDataProvider provider;
-    private static Complex ZERO, ONE;
+    private static Complex ZERO,ONE;
 
     @BeforeAll
     public static void prepareDataProvider() {
         provider = new UnitaryDataProvider(false);
-        ZERO = new Complex(0,0);
-        ONE = new Complex(1,0);
+        ZERO = new Complex(0, 0);
+        ONE = new Complex(1, 0);
     }
 
     @Test
@@ -53,41 +74,41 @@ public class UnitaryDataProviderTest {
         ComplexTensor controlGateData;
         controlGateData = provider.getOperationData(new ControlGate(new Gate(GateType.X, 5), 6, 5));
 
-        assertEquals(ONE, controlGateData.getElement(0,0));
-        assertEquals(ZERO, controlGateData.getElement(0,1));
-        assertEquals(ZERO, controlGateData.getElement(0,2));
-        assertEquals(ZERO, controlGateData.getElement(0,3));
-        assertEquals(ZERO, controlGateData.getElement(1,0));
-        assertEquals(ONE, controlGateData.getElement(1,1));
-        assertEquals(ZERO, controlGateData.getElement(1,2));
-        assertEquals(ZERO, controlGateData.getElement(1,3));
-        assertEquals(ZERO, controlGateData.getElement(2,0));
-        assertEquals(ZERO, controlGateData.getElement(2,1));
-        assertEquals(ZERO, controlGateData.getElement(2,2));
-        assertEquals(ONE, controlGateData.getElement(2,3));
-        assertEquals(ZERO, controlGateData.getElement(3,0));
-        assertEquals(ZERO, controlGateData.getElement(3,1));
-        assertEquals(ONE, controlGateData.getElement(3,2));
-        assertEquals(ZERO, controlGateData.getElement(3,3));
+        assertEquals(ONE, controlGateData.getElement(0, 0));
+        assertEquals(ZERO, controlGateData.getElement(0, 1));
+        assertEquals(ZERO, controlGateData.getElement(0, 2));
+        assertEquals(ZERO, controlGateData.getElement(0, 3));
+        assertEquals(ZERO, controlGateData.getElement(1, 0));
+        assertEquals(ONE, controlGateData.getElement(1, 1));
+        assertEquals(ZERO, controlGateData.getElement(1, 2));
+        assertEquals(ZERO, controlGateData.getElement(1, 3));
+        assertEquals(ZERO, controlGateData.getElement(2, 0));
+        assertEquals(ZERO, controlGateData.getElement(2, 1));
+        assertEquals(ZERO, controlGateData.getElement(2, 2));
+        assertEquals(ONE, controlGateData.getElement(2, 3));
+        assertEquals(ZERO, controlGateData.getElement(3, 0));
+        assertEquals(ZERO, controlGateData.getElement(3, 1));
+        assertEquals(ONE, controlGateData.getElement(3, 2));
+        assertEquals(ZERO, controlGateData.getElement(3, 3));
 
         controlGateData = provider.getOperationData(new ControlGate(new Gate(GateType.X, 6), 5, 6));
 
-        assertEquals(ONE, controlGateData.getElement(0,0));
-        assertEquals(ZERO, controlGateData.getElement(0,1));
-        assertEquals(ZERO, controlGateData.getElement(0,2));
-        assertEquals(ZERO, controlGateData.getElement(0,3));
-        assertEquals(ZERO, controlGateData.getElement(1,0));
-        assertEquals(ZERO, controlGateData.getElement(1,1));
-        assertEquals(ZERO, controlGateData.getElement(1,2));
-        assertEquals(ONE, controlGateData.getElement(1,3));
-        assertEquals(ZERO, controlGateData.getElement(2,0));
-        assertEquals(ZERO, controlGateData.getElement(2,1));
-        assertEquals(ONE, controlGateData.getElement(2,2));
-        assertEquals(ZERO, controlGateData.getElement(2,3));
-        assertEquals(ZERO, controlGateData.getElement(3,0));
-        assertEquals(ONE, controlGateData.getElement(3,1));
-        assertEquals(ZERO, controlGateData.getElement(3,2));
-        assertEquals(ZERO, controlGateData.getElement(3,3));
+        assertEquals(ONE, controlGateData.getElement(0, 0));
+        assertEquals(ZERO, controlGateData.getElement(0, 1));
+        assertEquals(ZERO, controlGateData.getElement(0, 2));
+        assertEquals(ZERO, controlGateData.getElement(0, 3));
+        assertEquals(ZERO, controlGateData.getElement(1, 0));
+        assertEquals(ZERO, controlGateData.getElement(1, 1));
+        assertEquals(ZERO, controlGateData.getElement(1, 2));
+        assertEquals(ONE, controlGateData.getElement(1, 3));
+        assertEquals(ZERO, controlGateData.getElement(2, 0));
+        assertEquals(ZERO, controlGateData.getElement(2, 1));
+        assertEquals(ONE, controlGateData.getElement(2, 2));
+        assertEquals(ZERO, controlGateData.getElement(2, 3));
+        assertEquals(ZERO, controlGateData.getElement(3, 0));
+        assertEquals(ONE, controlGateData.getElement(3, 1));
+        assertEquals(ZERO, controlGateData.getElement(3, 2));
+        assertEquals(ZERO, controlGateData.getElement(3, 3));
     }
 
     @Test
@@ -98,7 +119,7 @@ public class UnitaryDataProviderTest {
     @Test
     public void testCustomFunctionUnitaryData() {
         Function function = new Function("custom", 0, 0);
-        ComplexTensor customData = new ComplexTensor(2,2);
+        ComplexTensor customData = new ComplexTensor(2, 2);
         OperationDataProvider.getInstance().registerFunctionData("custom", customData);
 
         assertEquals(customData, provider.getOperationData(function));
@@ -122,7 +143,7 @@ public class UnitaryDataProviderTest {
     public void testStepUnitaryData() {
         Circuit circuit = new Circuit(5);
         circuit.H(0);
-        circuit.CNOT(2,1);
+        circuit.CNOT(2, 1);
         circuit.Z(4);
 
         Step step = circuit.getSteps().get(0);

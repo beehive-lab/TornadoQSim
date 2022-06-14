@@ -1,29 +1,63 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.simulator.unitary;
 
 import uk.ac.manchester.tornado.api.annotations.Parallel;
 
 /**
- * Provides operands used in the unitary simulator that can be accelerated with TornadoVM.
+ * Provides operands used in the unitary simulator that can be accelerated with
+ * TornadoVM.
+ * 
  * @author AlesKubicek
  */
 class UnitaryOperand {
 
     /**
-     * Performs a complex matrix multiplication on the supplied complex matrices (decomposed to primitive type arrays).
-     * It is assumed that the supplied matrices are valid for the operation (colsA = rowsB).
-     * @param realA flattened real parts of the complex matrix A.
-     * @param imagA flattened imaginary parts of the complex matrix A.
-     * @param rowsA number of rows in the complex matrix A.
-     * @param colsA number of columns in the complex matrix A.
-     * @param realB flattened real parts of the complex matrix B.
-     * @param imagB flattened imaginary parts of the complex matrix B.
-     * @param colsB number of columns in the complex matrix B.
-     * @param realC flattened real parts of the result complex matrix C (correct size must be allocated).
-     * @param imagC flattened imaginary parts of the result complex matrix C (correct size must be allocated).
+     * Performs a complex matrix multiplication on the supplied complex matrices
+     * (decomposed to primitive type arrays). It is assumed that the supplied
+     * matrices are valid for the operation (colsA = rowsB).
+     * 
+     * @param realA
+     *            flattened real parts of the complex matrix A.
+     * @param imagA
+     *            flattened imaginary parts of the complex matrix A.
+     * @param rowsA
+     *            number of rows in the complex matrix A.
+     * @param colsA
+     *            number of columns in the complex matrix A.
+     * @param realB
+     *            flattened real parts of the complex matrix B.
+     * @param imagB
+     *            flattened imaginary parts of the complex matrix B.
+     * @param colsB
+     *            number of columns in the complex matrix B.
+     * @param realC
+     *            flattened real parts of the result complex matrix C (correct size
+     *            must be allocated).
+     * @param imagC
+     *            flattened imaginary parts of the result complex matrix C (correct
+     *            size must be allocated).
      */
-    protected static void matrixProduct(float[] realA, float[] imagA, final int rowsA, final int colsA,
-                                        float[] realB, float[] imagB, final int colsB,
-                                        float[] realC, float[] imagC) {
+    protected static void matrixProduct(float[] realA, float[] imagA, final int rowsA, final int colsA, float[] realB, float[] imagB, final int colsB, float[] realC, float[] imagC) {
         for (@Parallel int i = 0; i < rowsA; i++) {
             for (@Parallel int j = 0; j < colsB; j++) {
                 int indexC = (i * rowsA) + j;
@@ -41,20 +75,30 @@ class UnitaryOperand {
     }
 
     /**
-     * Performs a complex multiplication with a transpose of the supplied row vector.
-     * It is assumed that the supplied vector is valid for the operation (colsA = sizeB).
-     * @param realA flattened real parts of the complex matrix A.
-     * @param imagA flattened imaginary parts of the complex matrix A.
-     * @param rowsA number of rows in the complex matrix A.
-     * @param colsA number of columns in the complex matrix A.
-     * @param realB flattend real parts of the row vector B.
-     * @param imagB flattend imaginary parts of the row vector B.
-     * @param realC flattened real parts of the result row vector C (correct size must be allocated).
-     * @param imagC flattened imaginary parts of the result row vector C (correct size must be allocated).
+     * Performs a complex multiplication with a transpose of the supplied row
+     * vector. It is assumed that the supplied vector is valid for the operation
+     * (colsA = sizeB).
+     * 
+     * @param realA
+     *            flattened real parts of the complex matrix A.
+     * @param imagA
+     *            flattened imaginary parts of the complex matrix A.
+     * @param rowsA
+     *            number of rows in the complex matrix A.
+     * @param colsA
+     *            number of columns in the complex matrix A.
+     * @param realB
+     *            flattend real parts of the row vector B.
+     * @param imagB
+     *            flattend imaginary parts of the row vector B.
+     * @param realC
+     *            flattened real parts of the result row vector C (correct size must
+     *            be allocated).
+     * @param imagC
+     *            flattened imaginary parts of the result row vector C (correct size
+     *            must be allocated).
      */
-    protected static void matrixVectorProduct(float[] realA, float[] imagA, final int rowsA, final int colsA,
-                                              float[] realB, float[] imagB,
-                                              float[] realC, float[] imagC) {
+    protected static void matrixVectorProduct(float[] realA, float[] imagA, final int rowsA, final int colsA, float[] realB, float[] imagB, float[] realC, float[] imagC) {
         for (@Parallel int i = 0; i < rowsA; i++) {
             int indexC = i;
             realC[indexC] = 0;
@@ -69,21 +113,34 @@ class UnitaryOperand {
     }
 
     /**
-     * Performs Kronecker product operation on the supplied complex matrices (decomposed to primitive type arrays).
-     * @param realA flattened real parts of the complex matrix A.
-     * @param imagA flattened imaginary parts of the complex matrix A.
-     * @param rowsA number of rows in the complex matrix A.
-     * @param colsA number of columns in the complex matrix A.
-     * @param realB flattened real parts of the complex matrix B.
-     * @param imagB flattened imaginary parts of the complex matrix B.
-     * @param rowsB number of rows in the complex matrix B.
-     * @param colsB number of columns in the complex matrix B.
-     * @param realC flattened real parts of the result complex matrix C (correct size must be allocated).
-     * @param imagC flattened imaginary parts of the result complex matrix C (correct size must be allocated).
+     * Performs Kronecker product operation on the supplied complex matrices
+     * (decomposed to primitive type arrays).
+     * 
+     * @param realA
+     *            flattened real parts of the complex matrix A.
+     * @param imagA
+     *            flattened imaginary parts of the complex matrix A.
+     * @param rowsA
+     *            number of rows in the complex matrix A.
+     * @param colsA
+     *            number of columns in the complex matrix A.
+     * @param realB
+     *            flattened real parts of the complex matrix B.
+     * @param imagB
+     *            flattened imaginary parts of the complex matrix B.
+     * @param rowsB
+     *            number of rows in the complex matrix B.
+     * @param colsB
+     *            number of columns in the complex matrix B.
+     * @param realC
+     *            flattened real parts of the result complex matrix C (correct size
+     *            must be allocated).
+     * @param imagC
+     *            flattened imaginary parts of the result complex matrix C (correct
+     *            size must be allocated).
      */
-    protected static void kroneckerProduct(float[] realA, float[] imagA, final int rowsA, final int colsA,
-                                           float[] realB, float[] imagB, final int rowsB, final int colsB,
-                                           float[] realC, float[] imagC) {
+    protected static void kroneckerProduct(float[] realA, float[] imagA, final int rowsA, final int colsA, float[] realB, float[] imagB, final int rowsB, final int colsB, float[] realC,
+            float[] imagC) {
         final int colsC = colsA * colsB;
         // For every element of A
         for (@Parallel int ia = 0; ia < rowsA; ia++) {
@@ -103,19 +160,27 @@ class UnitaryOperand {
     }
 
     /**
-     * Builds control gate unitary matrix that spans across multiple qubits. It is assumed that gate data
-     * supplied is 4x4 unitary matrix, control/target qubit is 0 and the other control/target qubit is the span
-     *  (eg. control = 0, target = 3 OR control = 3, target = 0). Result matrix is of size 2^span x 2^ span.
-     * @param realGate flattened real parts of the complex unitary operation matrix.
-     * @param imagGate flattened imaginary parts of the complex unitary operation matrix.
-     * @param control control qubit (0 or span).
-     * @param target target qubit (0 or span).
-     * @param realResult flattened real parts of the complex unitary result matrix.
-     * @param imagResult flattened imaginary parts of the complex unitary result matrix.
-     * @param rowsResult number of rows in the complex unitary result matrix.
+     * Builds control gate unitary matrix that spans across multiple qubits. It is
+     * assumed that gate data supplied is 4x4 unitary matrix, control/target qubit
+     * is 0 and the other control/target qubit is the span (eg. control = 0, target
+     * = 3 OR control = 3, target = 0). Result matrix is of size 2^span x 2^ span.
+     * 
+     * @param realGate
+     *            flattened real parts of the complex unitary operation matrix.
+     * @param imagGate
+     *            flattened imaginary parts of the complex unitary operation matrix.
+     * @param control
+     *            control qubit (0 or span).
+     * @param target
+     *            target qubit (0 or span).
+     * @param realResult
+     *            flattened real parts of the complex unitary result matrix.
+     * @param imagResult
+     *            flattened imaginary parts of the complex unitary result matrix.
+     * @param rowsResult
+     *            number of rows in the complex unitary result matrix.
      */
-    protected static void buildControlGate(float[] realGate, float[] imagGate, int control, int target,
-                                           float[] realResult, float[] imagResult, int rowsResult) {
+    protected static void buildControlGate(float[] realGate, float[] imagGate, int control, int target, float[] realResult, float[] imagResult, int rowsResult) {
         // Note: rowsResult = colsResult
         for (@Parallel int qRow = 0; qRow < rowsResult; qRow++) {
             // Control bit is 1 (apply gate)

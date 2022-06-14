@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -9,28 +30,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class StateTest {
 
-    private static Complex ONE, ZERO, HALF;
-    private static ComplexTensor stateVectorA, stateVectorB, stateVectorC, stateVectorD;
+    private static Complex ONE,ZERO,HALF;
+    private static ComplexTensor stateVectorA,stateVectorB,stateVectorC,stateVectorD;
 
     @BeforeAll
     public static void prepareStandardAmplitudes() {
-        ONE = new Complex(1,0);
-        ZERO = new Complex(0,0);
-        HALF = new Complex((float)(1 / Math.sqrt(2)),0);
+        ONE = new Complex(1, 0);
+        ZERO = new Complex(0, 0);
+        HALF = new Complex((float) (1 / Math.sqrt(2)), 0);
 
         stateVectorA = new ComplexTensor(8);
-        stateVectorA.insertElement(ONE,0);
+        stateVectorA.insertElement(ONE, 0);
 
         stateVectorB = new ComplexTensor(8);
-        stateVectorB.insertElement(ONE,7);
+        stateVectorB.insertElement(ONE, 7);
 
         stateVectorC = new ComplexTensor(8);
-        stateVectorC.insertElement(HALF,1);
-        stateVectorC.insertElement(HALF,2);
+        stateVectorC.insertElement(HALF, 1);
+        stateVectorC.insertElement(HALF, 2);
 
         stateVectorD = new ComplexTensor(8);
-        stateVectorD.insertElement(HALF,0);
-        stateVectorD.insertElement(HALF,7);
+        stateVectorD.insertElement(HALF, 0);
+        stateVectorD.insertElement(HALF, 7);
     }
 
     @Test
@@ -44,16 +65,16 @@ public class StateTest {
         assertTrue(qState.isNormalized());
 
         // Not normalized - greater
-        qState.getStateVector().insertElement(HALF,1);
+        qState.getStateVector().insertElement(HALF, 1);
         assertFalse(qState.isNormalized());
 
         // Not normalized - less
-        qState.getStateVector().insertElement(HALF,0);
-        qState.getStateVector().insertElement(ZERO,1);
+        qState.getStateVector().insertElement(HALF, 0);
+        qState.getStateVector().insertElement(ZERO, 1);
         assertFalse(qState.isNormalized());
 
         // Normalized
-        qState.getStateVector().insertElement(HALF,1);
+        qState.getStateVector().insertElement(HALF, 1);
         assertTrue(qState.isNormalized());
 
         assertThrows(IllegalArgumentException.class, () -> new State(-5));
@@ -83,8 +104,8 @@ public class StateTest {
         State qState = new State(getNormalizedVector(16));
 
         ComplexTensor valid = new ComplexTensor(16);
-        valid.insertElement(HALF,0);
-        valid.insertElement(HALF,1);
+        valid.insertElement(HALF, 0);
+        valid.insertElement(HALF, 1);
 
         qState.setStateVector(valid);
         assertEquals(valid, qState.getStateVector());
@@ -223,23 +244,23 @@ public class StateTest {
     public void testStateEquality() {
         State a = new State(3);
         ComplexTensor stateVector = a.getStateVector();
-        stateVector.insertElement(HALF,0);
-        stateVector.insertElement(HALF,7);
+        stateVector.insertElement(HALF, 0);
+        stateVector.insertElement(HALF, 7);
 
         State b = new State(3);
         stateVector = b.getStateVector();
-        stateVector.insertElement(HALF,0);
-        stateVector.insertElement(HALF,7);
+        stateVector.insertElement(HALF, 0);
+        stateVector.insertElement(HALF, 7);
 
         State c = new State(3);
         stateVector = c.getStateVector();
-        stateVector.insertElement(HALF,0);
-        stateVector.insertElement(HALF,6);
+        stateVector.insertElement(HALF, 0);
+        stateVector.insertElement(HALF, 6);
 
         State d = new State(4);
         stateVector = c.getStateVector();
-        stateVector.insertElement(HALF,0);
-        stateVector.insertElement(HALF,6);
+        stateVector.insertElement(HALF, 0);
+        stateVector.insertElement(HALF, 6);
 
         assertEquals(a, b);
         assertNotEquals(a, c);
@@ -248,7 +269,7 @@ public class StateTest {
 
     private ComplexTensor getNormalizedVector(int size) {
         ComplexTensor vector = new ComplexTensor(size);
-        vector.insertElement(new Complex(1,0),0);
+        vector.insertElement(new Complex(1, 0), 0);
         return vector;
     }
 
