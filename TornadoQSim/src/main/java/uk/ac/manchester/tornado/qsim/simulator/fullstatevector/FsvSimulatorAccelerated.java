@@ -36,6 +36,14 @@ public class FsvSimulatorAccelerated implements Simulator {
     private float[] stateRealControl;
     private float[] stateImagControl;
 
+    private long startGate,endGate;
+    private long totalElapsedTimeOfGate = 0;
+    private int numOfInvocationsOfGate;
+
+    private long startControlGate,endControlGate;
+    private long totalElapsedTimeOfControlGate = 0;
+    private int numOfInvocationsOfControlGate;
+
     /**
      * Constructs a full state vector simulator.
      */
@@ -62,6 +70,10 @@ public class FsvSimulatorAccelerated implements Simulator {
 
     @Override
     public State simulateFullState(Circuit circuit) {
+        numOfInvocationsOfGate = 0;
+        totalElapsedTimeOfGate = 0;
+        numOfInvocationsOfControlGate = 0;
+        totalElapsedTimeOfControlGate = 0;
         if (circuit == null)
             throw new IllegalArgumentException("Invalid circuit supplied (NULL).");
 
@@ -75,10 +87,18 @@ public class FsvSimulatorAccelerated implements Simulator {
             for (Operation operation : operations) {
                 switch (operation.operationType()) {
                     case Gate:
+                        numOfInvocationsOfGate++;
+                        startGate = System.nanoTime();
                         applyGate(resultState, (Gate) operation);
+                        endGate = System.nanoTime();
+                        totalElapsedTimeOfGate += (endGate - startGate);
                         break;
                     case ControlGate:
+                        numOfInvocationsOfControlGate++;
+                        startControlGate = System.nanoTime();
                         applyControlGate(resultState, (ControlGate) operation);
+                        endControlGate = System.nanoTime();
+                        totalElapsedTimeOfControlGate += (endControlGate - startControlGate);
                         break;
                     case Function:
                         applyStandardFunction(resultState, (Function) operation);
@@ -97,6 +117,22 @@ public class FsvSimulatorAccelerated implements Simulator {
     @Override
     public int simulateAndCollapse(Circuit circuit) {
         return simulateFullState(circuit).collapse();
+    }
+
+    public long getTimeOfGate() {
+        return totalElapsedTimeOfGate;
+    }
+
+    public long getNumOfInvocationsOfGate() {
+        return numOfInvocationsOfGate;
+    }
+
+    public long getTimeOfControlGate() {
+        return totalElapsedTimeOfControlGate;
+    }
+
+    public long getNumOfInvocationsOfControlGate() {
+        return numOfInvocationsOfControlGate;
     }
 
     private void applyGate(State state, Gate gate) {
