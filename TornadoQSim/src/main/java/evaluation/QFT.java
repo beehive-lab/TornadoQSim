@@ -47,6 +47,44 @@ public class QFT {
         }
 
         Common.simulateAndPrint(simulator, circuit);
+        switch (simulatorType) {
+            case 1:
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of matrix multiplication: " + ((UnitarySimulatorStandard) simulator).getNumOfInvocationsOfMultiplication() + ".");
+                System.out.println("Execution time of matrix multiplication: " + ((UnitarySimulatorStandard) simulator).getTimeOfMultiplication() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of vector: " + ((UnitarySimulatorStandard) simulator).getNumOfInvocationsOfVector() + ".");
+                System.out.println("Execution time of vector: " + ((UnitarySimulatorStandard) simulator).getTimeOfVector() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                break;
+            case 2:
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of matrix multiplication: " + ((UnitarySimulatorAccelerated) simulator).getNumOfInvocationsOfMultiplication() + ".");
+                System.out.println("Execution time of matrix multiplication: " + ((UnitarySimulatorAccelerated) simulator).getTimeOfMultiplication() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of vector: " + ((UnitarySimulatorAccelerated) simulator).getNumOfInvocationsOfVector() + ".");
+                System.out.println("Execution time of vector: " + ((UnitarySimulatorAccelerated) simulator).getTimeOfVector() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                break;
+            case 3:
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of gate: " + ((FsvSimulatorStandard) simulator).getNumOfInvocationsOfGate() + ".");
+                System.out.println("Execution time of gate: " + ((FsvSimulatorStandard) simulator).getTimeOfGate() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of control gate: " + ((FsvSimulatorStandard) simulator).getNumOfInvocationsOfControlGate() + ".");
+                System.out.println("Execution time of control gate: " + ((FsvSimulatorStandard) simulator).getTimeOfControlGate() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                break;
+            case 4:
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of gate: " + ((FsvSimulatorAccelerated) simulator).getNumOfInvocationsOfGate() + ".");
+                System.out.println("Execution time of gate: " + ((FsvSimulatorAccelerated) simulator).getTimeOfGate() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                System.out.println("Invocations of control gate: " + ((FsvSimulatorAccelerated) simulator).getNumOfInvocationsOfControlGate() + ".");
+                System.out.println("Execution time of control gate: " + ((FsvSimulatorAccelerated) simulator).getTimeOfControlGate() + "ns.");
+                System.out.println("-------------------------------------------------------------------------------");
+                break;
+        }
     }
 
     private static void initState(Circuit circuit) {
