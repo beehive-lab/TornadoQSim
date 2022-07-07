@@ -37,10 +37,14 @@ public class FsvSimulatorAccelerated implements Simulator {
     private float[] stateImagControl;
 
     private long startGate,endGate;
+    private long startArrayCopyForGate,endArrayCopyForGate;
+    private long totalElapsedTimeOfArrayCopyForGate = 0;
     private long totalElapsedTimeOfGate = 0;
     private int numOfInvocationsOfGate;
 
     private long startControlGate,endControlGate;
+    private long startArrayCopyForControlGate,endArrayCopyForControlGate;
+    private long totalElapsedTimeOfArrayCopyForControlGate = 0;
     private long totalElapsedTimeOfControlGate = 0;
     private int numOfInvocationsOfControlGate;
 
@@ -70,10 +74,7 @@ public class FsvSimulatorAccelerated implements Simulator {
 
     @Override
     public State simulateFullState(Circuit circuit) {
-        numOfInvocationsOfGate = 0;
-        totalElapsedTimeOfGate = 0;
-        numOfInvocationsOfControlGate = 0;
-        totalElapsedTimeOfControlGate = 0;
+        resetCounters();
         if (circuit == null)
             throw new IllegalArgumentException("Invalid circuit supplied (NULL).");
 
@@ -114,6 +115,15 @@ public class FsvSimulatorAccelerated implements Simulator {
         return resultState;
     }
 
+    public void resetCounters() {
+        numOfInvocationsOfGate = 0;
+        totalElapsedTimeOfGate = 0;
+        totalElapsedTimeOfArrayCopyForGate = 0;
+        numOfInvocationsOfControlGate = 0;
+        totalElapsedTimeOfControlGate = 0;
+        totalElapsedTimeOfArrayCopyForControlGate = 0;
+    }
+
     @Override
     public int simulateAndCollapse(Circuit circuit) {
         return simulateFullState(circuit).collapse();
@@ -127,6 +137,10 @@ public class FsvSimulatorAccelerated implements Simulator {
         return numOfInvocationsOfGate;
     }
 
+    public long getArrayCopyTimeOfGate() {
+        return totalElapsedTimeOfArrayCopyForGate;
+    }
+
     public long getTimeOfControlGate() {
         return totalElapsedTimeOfControlGate;
     }
@@ -135,10 +149,21 @@ public class FsvSimulatorAccelerated implements Simulator {
         return numOfInvocationsOfControlGate;
     }
 
+    public long getArrayCopyTimeOfControlGate() {
+        return totalElapsedTimeOfArrayCopyForControlGate;
+    }
+
     private void applyGate(State state, Gate gate) {
+        // totalElapsedTimeOfArrayCopyForGate = 0;
+        startArrayCopyForGate = System.nanoTime();
         updateInputDataOfTaskSchedule(state, gate);
+        endArrayCopyForGate = System.nanoTime();
+        totalElapsedTimeOfArrayCopyForGate += (endArrayCopyForGate - startArrayCopyForGate);
         applyGateSchedule.execute();
+        startArrayCopyForControlGate = System.nanoTime();
         updateOutputDataOfGate(state);
+        endArrayCopyForControlGate = System.nanoTime();
+        totalElapsedTimeOfArrayCopyForGate += (endArrayCopyForGate - startArrayCopyForGate);
     }
 
     private void updateInputDataOfTaskSchedule(State state, Gate gate) {
@@ -179,9 +204,16 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void applyControlGate(State state, ControlGate controlGate) {
+        // totalElapsedTimeOfArrayCopyForControlGate = 0;
+        startArrayCopyForControlGate = System.nanoTime();
         updateInputDataOfTaskSchedule(state, controlGate);
+        endArrayCopyForControlGate = System.nanoTime();
+        totalElapsedTimeOfArrayCopyForControlGate += (endArrayCopyForControlGate - startArrayCopyForControlGate);
         applyControlGateSchedule.execute();
+        startArrayCopyForControlGate = System.nanoTime();
         updateOutputDataOfControlGate(state);
+        endArrayCopyForControlGate = System.nanoTime();
+        totalElapsedTimeOfArrayCopyForControlGate += (endArrayCopyForControlGate - startArrayCopyForControlGate);
     }
 
     private void updateInputDataOfTaskSchedule(State state, ControlGate gate) {

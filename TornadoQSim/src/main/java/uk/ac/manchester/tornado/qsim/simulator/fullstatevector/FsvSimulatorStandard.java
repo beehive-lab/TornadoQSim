@@ -40,10 +40,7 @@ public class FsvSimulatorStandard implements Simulator {
 
     @Override
     public State simulateFullState(Circuit circuit) {
-        numOfInvocationsOfGate = 0;
-        totalElapsedTimeOfGate = 0;
-        numOfInvocationsOfControlGate = 0;
-        totalElapsedTimeOfControlGate = 0;
+        resetCounters();
         if (circuit == null)
             throw new IllegalArgumentException("Invalid circuit supplied (NULL).");
 
@@ -81,6 +78,13 @@ public class FsvSimulatorStandard implements Simulator {
         }
 
         return resultState;
+    }
+
+    public void resetCounters() {
+        numOfInvocationsOfGate = 0;
+        totalElapsedTimeOfGate = 0;
+        numOfInvocationsOfControlGate = 0;
+        totalElapsedTimeOfControlGate = 0;
     }
 
     @Override
