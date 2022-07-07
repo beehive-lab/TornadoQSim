@@ -79,9 +79,11 @@ public class QFT {
                 System.out.println("-------------------------------------------------------------------------------");
                 System.out.println("Invocations of gate: " + ((FsvSimulatorAccelerated) simulator).getNumOfInvocationsOfGate() + ".");
                 System.out.println("Execution time of gate: " + ((FsvSimulatorAccelerated) simulator).getTimeOfGate() + "ns.");
+                System.out.println("Array Copy time of gate: " + ((FsvSimulatorAccelerated) simulator).getArrayCopyTimeOfGate() + "ns.");
                 System.out.println("-------------------------------------------------------------------------------");
                 System.out.println("Invocations of control gate: " + ((FsvSimulatorAccelerated) simulator).getNumOfInvocationsOfControlGate() + ".");
                 System.out.println("Execution time of control gate: " + ((FsvSimulatorAccelerated) simulator).getTimeOfControlGate() + "ns.");
+                System.out.println("Array Copy time of control gate: " + ((FsvSimulatorAccelerated) simulator).getArrayCopyTimeOfControlGate() + "ns.");
                 System.out.println("-------------------------------------------------------------------------------");
                 break;
         }
