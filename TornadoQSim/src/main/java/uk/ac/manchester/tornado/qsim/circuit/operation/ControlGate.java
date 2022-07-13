@@ -14,8 +14,8 @@ import java.util.Objects;
  */
 public class ControlGate implements Operation {
     private final Gate gate;
-    private final int control;
-    private final int target;
+    private final int[] control;
+    private final int[] target;
 
     /**
      * Constructs a standard quantum controlled gate.
@@ -35,8 +35,10 @@ public class ControlGate implements Operation {
         if (control == target)
             throw new IllegalArgumentException("Control and target qubits must act on different qubits.");
         this.gate = gate;
-        this.control = control;
-        this.target = target;
+        this.control = new int[1];
+        this.control[0] = control;
+        this.target = new int[1];
+        this.target[0] = target;
     }
 
     /**
@@ -54,7 +56,7 @@ public class ControlGate implements Operation {
      * @return control qubit.
      */
     public int[] controlQubit() {
-        return new int[] { control };
+        return control;
     }
 
     /**
@@ -63,13 +65,13 @@ public class ControlGate implements Operation {
      * @return target qubit.
      */
     public int[] targetQubit() {
-        return new int[] { target };
+        return target;
     }
 
     @Override
     public int[] involvedQubits() {
         int[] qubits = new int[size()];
-        int fromQubit = control < target ? control : target;
+        int fromQubit = control[0] < target[0] ? control[0] : target[0];
         for (int i = 0; i < qubits.length; i++)
             qubits[i] = fromQubit + i;
         return qubits;
@@ -80,7 +82,7 @@ public class ControlGate implements Operation {
      */
     @Override
     public int size() {
-        return Math.abs(target - control) + 1;
+        return Math.abs(target[0] - control[0]) + 1;
     }
 
     @Override
@@ -95,11 +97,11 @@ public class ControlGate implements Operation {
         if (o == null || getClass() != o.getClass())
             return false;
         ControlGate that = (ControlGate) o;
-        return control == that.control && target == that.target && gate.equals(that.gate);
+        return control[0] == that.control[0] && target[0] == that.target[0] && gate.equals(that.gate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gate, control, target);
+        return Objects.hash(gate, control[0], target[0]);
     }
 }

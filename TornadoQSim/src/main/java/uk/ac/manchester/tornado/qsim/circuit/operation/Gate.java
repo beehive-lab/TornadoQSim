@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class Gate implements Operation {
     private final GateType type;
-    private final int target;
+    private final int[] target;
     private final float phi;
 
     /**
@@ -30,7 +30,8 @@ public class Gate implements Operation {
         if (type == GateType.R)
             throw new UnsupportedOperationException("Use constructor with phase parameter for 'R' gate.");
         this.type = type;
-        this.target = target;
+        this.target = new int[1];
+        this.target[0] = target;
         this.phi = 0;
     }
 
@@ -50,7 +51,8 @@ public class Gate implements Operation {
         if (type != GateType.R)
             throw new UnsupportedOperationException("Use constructor without phase parameter for this type of gate.");
         this.type = type;
-        this.target = target;
+        this.target = new int[1];
+        this.target[0] = target;
         this.phi = phi;
     }
 
@@ -69,7 +71,7 @@ public class Gate implements Operation {
      * @return target qubit.
      */
     public int[] targetQubit() {
-        return new int[] { target };
+        return target;
     }
 
     /**
@@ -85,7 +87,7 @@ public class Gate implements Operation {
 
     @Override
     public int[] involvedQubits() {
-        return new int[] { target };
+        return target;
     }
 
     @Override
@@ -105,11 +107,11 @@ public class Gate implements Operation {
         if (o == null || getClass() != o.getClass())
             return false;
         Gate gate = (Gate) o;
-        return target == gate.target && Float.compare(gate.phi, phi) == 0 && type == gate.type;
+        return target[0] == gate.target[0] && Float.compare(gate.phi, phi) == 0 && type == gate.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, target, phi);
+        return Objects.hash(type, target[0], phi);
     }
 }

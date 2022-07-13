@@ -161,7 +161,7 @@ public class FsvSimulatorAccelerated implements Simulator {
         totalElapsedTimeOfArrayCopyForGate += (endArrayCopyForGate - startArrayCopyForGate);
         applyGateSchedule.execute();
         startArrayCopyForControlGate = System.nanoTime();
-        updateOutputDataOfGate(state);
+        updateOutputDataOfGate(state, gate);
         endArrayCopyForControlGate = System.nanoTime();
         totalElapsedTimeOfArrayCopyForGate += (endArrayCopyForGate - startArrayCopyForGate);
     }
@@ -196,11 +196,13 @@ public class FsvSimulatorAccelerated implements Simulator {
             System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
             System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
         }
+        applyGateSchedule.updateReference(targetQubit, gate.targetQubit());
     }
 
-    private void updateOutputDataOfGate(State state) {
+    private void updateOutputDataOfGate(State state, Gate gate) {
         System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
         System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
+        applyGateSchedule.updateReference(gate.targetQubit(), targetQubit);
     }
 
     private void applyControlGate(State state, ControlGate controlGate) {
