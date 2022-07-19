@@ -123,6 +123,8 @@ public class FsvSimulatorAccelerated implements Simulator {
         numOfInvocationsOfControlGate = 0;
         totalElapsedTimeOfControlGate = 0;
         totalElapsedTimeOfArrayCopyForControlGate = 0;
+        applyGateSchedule = null;
+        applyControlGateSchedule = null;
     }
 
     @Override
