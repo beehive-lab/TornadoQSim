@@ -10,6 +10,7 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.Operation;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -110,17 +111,14 @@ public class FsvSimulatorStandard implements Simulator {
 
     private void applyGate(State state, Gate gate) {
         ComplexTensor gateData = dataProvider.getOperationData(gate);
-        float[] gateReal = new float[] { gateData.getElement(0, 0).real(), gateData.getElement(0, 1).real(), gateData.getElement(1, 0).real(), gateData.getElement(1, 1).real(), };
-        float[] gateImag = new float[] { gateData.getElement(0, 0).imag(), gateData.getElement(0, 1).imag(), gateData.getElement(1, 0).imag(), gateData.getElement(1, 1).imag(), };
-        FsvOperand.applyGate(gate.targetQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), state.size() / 2, gateReal, gateImag);
+        FsvOperand.applyGate(gate.targetQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), state.size() / 2, gateData.getRawRealData(),
+                gateData.getRawImagData());
     }
 
     private void applyControlGate(State state, ControlGate controlGate) {
         ComplexTensor gateData = dataProvider.getOperationData(controlGate);
-        float[] gateReal = new float[] { gateData.getElement(0, 0).real(), gateData.getElement(0, 1).real(), gateData.getElement(1, 0).real(), gateData.getElement(1, 1).real(), };
-        float[] gateImag = new float[] { gateData.getElement(0, 0).imag(), gateData.getElement(0, 1).imag(), gateData.getElement(1, 0).imag(), gateData.getElement(1, 1).imag(), };
-        FsvOperand.applyControlGate(controlGate.targetQubit(), controlGate.controlQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), state.size() / 2, gateReal,
-                gateImag);
+        FsvOperand.applyControlGate(controlGate.targetQubit(), controlGate.controlQubit(), state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), state.size() / 2,
+                gateData.getRawRealData(), gateData.getRawImagData());
     }
 
     private void applyStandardFunction(State state, Function standardFunction) {
