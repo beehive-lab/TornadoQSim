@@ -11,6 +11,7 @@ import uk.ac.manchester.tornado.qsim.circuit.operation.Operation;
 import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 import uk.ac.manchester.tornado.qsim.simulator.Simulator;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -170,8 +171,6 @@ public class FsvSimulatorAccelerated implements Simulator {
         ComplexTensor gateData = dataProvider.getOperationData(gate);
 
         if (applyGateSchedule == null) {
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
             if (gateReal == null) {
                 gateReal = new float[gateData.size()];
             }
@@ -183,13 +182,11 @@ public class FsvSimulatorAccelerated implements Simulator {
 
             // @formatter:off
             applyGateSchedule = new TaskSchedule("applyGate")
-                    .streamIn(targetQubit, stateReal, stateImag, gateReal, gateImag)
-                    .task("applyGateTask", FsvOperand::applyGate, targetQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
-                    .streamOut(stateReal, stateImag);
+                    .streamIn(targetQubit, state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateReal, gateImag)
+                    .task("applyGateTask", FsvOperand::applyGate, targetQubit, state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateReal, gateImag)
+                    .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData());
             // @formatter:on
         } else {
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
             System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
             System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
         }
@@ -197,8 +194,6 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void updateOutputDataOfGate(State state, Gate gate) {
-        System.arraycopy(stateReal, 0, state.getStateVector().getRawRealData(), 0, stateReal.length);
-        System.arraycopy(stateImag, 0, state.getStateVector().getRawImagData(), 0, stateImag.length);
         applyGateSchedule.updateReference(gate.targetQubit(), targetQubit);
     }
 
@@ -219,8 +214,6 @@ public class FsvSimulatorAccelerated implements Simulator {
         ComplexTensor gateData = dataProvider.getOperationData(gate);
 
         if (applyControlGateSchedule == null) {
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateRealControl, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImagControl, 0, state.getStateVector().getRawImagData().length);
             if (gateReal == null) {
                 gateReal = new float[gateData.size()];
             }
@@ -232,13 +225,11 @@ public class FsvSimulatorAccelerated implements Simulator {
 
             // @formatter:off
             applyControlGateSchedule = new TaskSchedule("applyControlGate")
-                    .streamIn(targetQubit, controlQubit, stateRealControl, stateImagControl, gateReal, gateImag)
-                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateRealControl, stateImagControl, halfRows, gateReal, gateImag)
-                    .streamOut(stateRealControl, stateImagControl);
+                    .streamIn(targetQubit, controlQubit, state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), gateReal, gateImag)
+                    .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData(), halfRows, gateReal, gateImag)
+                    .streamOut(state.getStateVector().getRawRealData(), state.getStateVector().getRawImagData());
             // @formatter:on
         } else {
-            System.arraycopy(state.getStateVector().getRawRealData(), 0, stateRealControl, 0, state.getStateVector().getRawRealData().length);
-            System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImagControl, 0, state.getStateVector().getRawImagData().length);
             System.arraycopy(gateData.getRawRealData(), 0, gateReal, 0, gateData.getRawRealData().length);
             System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
         }
@@ -247,8 +238,6 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void updateOutputDataOfControlGate(State state, ControlGate gate) {
-        System.arraycopy(stateRealControl, 0, state.getStateVector().getRawRealData(), 0, stateRealControl.length);
-        System.arraycopy(stateImagControl, 0, state.getStateVector().getRawImagData(), 0, stateImagControl.length);
         applyControlGateSchedule.updateReference(gate.targetQubit(), targetQubit);
         applyControlGateSchedule.updateReference(gate.controlQubit(), controlQubit);
     }
