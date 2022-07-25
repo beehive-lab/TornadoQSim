@@ -34,7 +34,7 @@ elif [ "$1" == "fsv-accel" ]; then
 	echo "(--------------------- TornadoVM Quantum Simulator ---------------------)"        
 	echo "Running $2 circuit with the Full State Vector backend (parallel execution)"
 	#tornado ${JFLAGS} -Xms16G -Xmx16G -DapplyGate.applyGateTask.device=0:0 -DapplyControlGate.applyControlGateTask.device=0:0 --enableProfiler console --dumpProfiler profiler-app.json -classpath ${CLASSPATH}:${JARS} evaluation/$2 4 $3
-	tornado ${JFLAGS} -Xms16G -Xmx16G --printBytecodes -DapplyGate.applyGateTask.device=0:0 -DapplyControlGate.applyControlGateTask.device=0:0 -classpath ${CLASSPATH}:${JARS} evaluation/$2 4 $3
+	tornado ${JFLAGS} -Xms16G -Xmx16G -DapplyGate.applyGateTask.device=0:0 -DapplyControlGate.applyControlGateTask.device=0:0 -classpath ${CLASSPATH}:${JARS} evaluation/$2 4 $3
 else
 	echo "Please run:"
 	echo "tornado-qsim unitary-java  <circuit_class> <num_of_qubits>  for sequential execution of a quantum circuit with Unitary Matrix."
