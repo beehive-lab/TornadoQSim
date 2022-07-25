@@ -18,8 +18,8 @@ import java.util.LongSummaryStatistics;
  * @author Ales Kubicek
  */
 public class Common {
-    private static final int WARMUP_ITERATIONS = 0;
-    private static final int TIMING_ITERATIONS = 1;
+    private static final int WARMUP_ITERATIONS = 20;
+    private static final int TIMING_ITERATIONS = 9;
 
     /**
      * Parses number of qubits from supplied program arguments.
