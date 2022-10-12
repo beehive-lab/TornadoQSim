@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
 import uk.ac.manchester.tornado.qsim.circuit.operation.enums.GateType;
@@ -7,8 +28,9 @@ import uk.ac.manchester.tornado.qsim.math.ComplexTensor;
 import java.util.HashMap;
 
 /**
- * Provides data as complex tensor (rank 2 - matrix) for standard quantum logic gates or registered custom quantum
- * unitary functions.
+ * Provides data as complex tensor (rank 2 - matrix) for standard quantum logic
+ * gates or registered custom quantum unitary functions.
+ * 
  * @author Ales Kubicek
  */
 public class OperationDataProvider {
@@ -26,19 +48,23 @@ public class OperationDataProvider {
 
     /**
      * Gets the singleton instance.
+     * 
      * @return singleton instance of the operation data provider.
      */
     public static OperationDataProvider getInstance() {
-        if(instance == null)
+        if (instance == null)
             instance = new OperationDataProvider();
         return instance;
     }
 
     /**
-     * Registers custom function data provided as rank 2 complex tensor.
-     * Overwrites data registered with the same function name if already present.
-     * @param functionName name of the custom quantum function.
-     * @param data rank 2 complex tensor.
+     * Registers custom function data provided as rank 2 complex tensor. Overwrites
+     * data registered with the same function name if already present.
+     * 
+     * @param functionName
+     *            name of the custom quantum function.
+     * @param data
+     *            rank 2 complex tensor.
      */
     public void registerFunctionData(String functionName, ComplexTensor data) {
         if (!isFunctionNameValid(functionName))
@@ -49,8 +75,11 @@ public class OperationDataProvider {
     }
 
     /**
-     * Checks whether data for specific supplied function name is registered with the data provider.
-     * @param functionName name of the custom quantum function.
+     * Checks whether data for specific supplied function name is registered with
+     * the data provider.
+     * 
+     * @param functionName
+     *            name of the custom quantum function.
      * @return true, if data for the supplied function name is registered.
      */
     public boolean isFunctionDataRegistered(String functionName) {
@@ -61,7 +90,9 @@ public class OperationDataProvider {
 
     /**
      * Gets complex tensor data for the registered custom function.
-     * @param functionName name of the custom quantum function.
+     * 
+     * @param functionName
+     *            name of the custom quantum function.
      * @return function data.
      */
     public ComplexTensor getData(String functionName) {
@@ -74,7 +105,9 @@ public class OperationDataProvider {
 
     /**
      * Gets complex tensor data for the standard quantum logic gate.
-     * @param gate standard quantum logic gate.
+     * 
+     * @param gate
+     *            standard quantum logic gate.
      * @return gate data.
      */
     public ComplexTensor getData(Gate gate) {
@@ -82,8 +115,7 @@ public class OperationDataProvider {
             if (phaseGateData.containsKey(gate.phi()))
                 return phaseGateData.get(gate.phi());
             return createDataEntry(gate.type(), gate.phi());
-        }
-        else {
+        } else {
             if (gateData.containsKey(gate.type()))
                 return gateData.get(gate.type());
             return createDataEntry(gate.type(), 0);
@@ -92,45 +124,45 @@ public class OperationDataProvider {
 
     private ComplexTensor createDataEntry(GateType type, float phi) {
         Complex phaseShift;
-        ComplexTensor dataEntry = new ComplexTensor(2,2);
+        ComplexTensor dataEntry = new ComplexTensor(2, 2);
         switch (type) {
             case X:
-                dataEntry.insertElement(new Complex(1,0), 0,1);
-                dataEntry.insertElement(new Complex(1,0), 1,0);
+                dataEntry.insertElement(new Complex(1, 0), 0, 1);
+                dataEntry.insertElement(new Complex(1, 0), 1, 0);
                 break;
             case Y:
-                dataEntry.insertElement(new Complex(0,-1), 0,1);
-                dataEntry.insertElement(new Complex(0,1), 1,0);
+                dataEntry.insertElement(new Complex(0, -1), 0, 1);
+                dataEntry.insertElement(new Complex(0, 1), 1, 0);
                 break;
             case Z:
-                phaseShift = new Complex(-1,0);
-                dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(phaseShift, 1,1);
+                phaseShift = new Complex(-1, 0);
+                dataEntry.insertElement(new Complex(1, 0), 0, 0);
+                dataEntry.insertElement(phaseShift, 1, 1);
                 break;
             case H:
-                dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),0), 0,0);
-                dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),0), 0,1);
-                dataEntry.insertElement(new Complex((float)(1 / Math.sqrt(2)),0), 1,0);
-                dataEntry.insertElement(new Complex((float)(-1 / Math.sqrt(2)),0), 1,1);
+                dataEntry.insertElement(new Complex((float) (1 / Math.sqrt(2)), 0), 0, 0);
+                dataEntry.insertElement(new Complex((float) (1 / Math.sqrt(2)), 0), 0, 1);
+                dataEntry.insertElement(new Complex((float) (1 / Math.sqrt(2)), 0), 1, 0);
+                dataEntry.insertElement(new Complex((float) (-1 / Math.sqrt(2)), 0), 1, 1);
                 break;
             case S:
-                phaseShift = new Complex(0,1);
-                dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(phaseShift, 1,1);
+                phaseShift = new Complex(0, 1);
+                dataEntry.insertElement(new Complex(1, 0), 0, 0);
+                dataEntry.insertElement(phaseShift, 1, 1);
                 break;
             case T:
-                phaseShift = new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2)));
-                dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(phaseShift, 1,1);
+                phaseShift = new Complex((float) (1 / Math.sqrt(2)), (float) (1 / Math.sqrt(2)));
+                dataEntry.insertElement(new Complex(1, 0), 0, 0);
+                dataEntry.insertElement(phaseShift, 1, 1);
                 break;
             case R:
-                phaseShift = new Complex(0,phi).exp();
-                dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(phaseShift, 1,1);
+                phaseShift = new Complex(0, phi).exp();
+                dataEntry.insertElement(new Complex(1, 0), 0, 0);
+                dataEntry.insertElement(phaseShift, 1, 1);
                 break;
             case I:
-                dataEntry.insertElement(new Complex(1,0), 0,0);
-                dataEntry.insertElement(new Complex(1,0), 1,1);
+                dataEntry.insertElement(new Complex(1, 0), 0, 0);
+                dataEntry.insertElement(new Complex(1, 0), 1, 1);
                 break;
 
         }

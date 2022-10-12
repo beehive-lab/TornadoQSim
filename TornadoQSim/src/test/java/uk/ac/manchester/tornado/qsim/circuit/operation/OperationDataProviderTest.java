@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit.operation;
 
 import org.junit.jupiter.api.Test;
@@ -18,25 +39,25 @@ public class OperationDataProviderTest {
     public void testGateDataProvider() {
         OperationDataProvider dataProvider = OperationDataProvider.getInstance();
 
-        ComplexTensor gate = new ComplexTensor(gateData(GateType.X), 2,2);
+        ComplexTensor gate = new ComplexTensor(gateData(GateType.X), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.X, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.Y), 2,2);
+        gate = new ComplexTensor(gateData(GateType.Y), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.Y, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.Z), 2,2);
+        gate = new ComplexTensor(gateData(GateType.Z), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.Z, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.H), 2,2);
+        gate = new ComplexTensor(gateData(GateType.H), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.H, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.S), 2,2);
+        gate = new ComplexTensor(gateData(GateType.S), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.S, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.T), 2,2);
+        gate = new ComplexTensor(gateData(GateType.T), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.T, 0)));
 
-        gate = new ComplexTensor(gateData(GateType.I), 2,2);
+        gate = new ComplexTensor(gateData(GateType.I), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.I, 0)));
     }
 
@@ -44,20 +65,20 @@ public class OperationDataProviderTest {
     public void testPhaseShiftGateDataProvider() {
         OperationDataProvider dataProvider = OperationDataProvider.getInstance();
 
-        float phi = (float)(Math.PI / 1.0);
-        ComplexTensor gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        float phi = (float) (Math.PI / 1.0);
+        ComplexTensor gate = new ComplexTensor(phaseShiftGateData(phi), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
-        phi = (float)(Math.PI / 2.0);
-        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        phi = (float) (Math.PI / 2.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
-        phi = (float)(Math.PI / 4.0);
-        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        phi = (float) (Math.PI / 4.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
 
-        phi = (float)(Math.PI / 8.0);
-        gate = new ComplexTensor(phaseShiftGateData(phi), 2,2);
+        phi = (float) (Math.PI / 8.0);
+        gate = new ComplexTensor(phaseShiftGateData(phi), 2, 2);
         assertEquals(gate, dataProvider.getData(new Gate(GateType.R, 0, phi)));
     }
 
@@ -65,11 +86,11 @@ public class OperationDataProviderTest {
     public void testFunctionDataProvider() {
         OperationDataProvider dataProvider = OperationDataProvider.getInstance();
 
-        ComplexTensor validData = new ComplexTensor(gateData(GateType.H), 2,2);
+        ComplexTensor validData = new ComplexTensor(gateData(GateType.H), 2, 2);
         dataProvider.registerFunctionData("custom", validData);
         assertEquals(validData, dataProvider.getData("custom"));
 
-        validData = new ComplexTensor(gateData(GateType.X), 2,2);
+        validData = new ComplexTensor(gateData(GateType.X), 2, 2);
         dataProvider.registerFunctionData("custom", validData);
         assertEquals(validData, dataProvider.getData("custom"));
 
@@ -95,65 +116,26 @@ public class OperationDataProviderTest {
     private Complex[] gateData(GateType type) {
         switch (type) {
             case X:
-                return new Complex[] {
-                        new Complex(0,0),
-                        new Complex(1,0),
-                        new Complex(1,0),
-                        new Complex(0,0)
-                };
+                return new Complex[] { new Complex(0, 0), new Complex(1, 0), new Complex(1, 0), new Complex(0, 0) };
             case Y:
-                return new Complex[] {
-                        new Complex(0,0),
-                        new Complex(0,-1),
-                        new Complex(0,1),
-                        new Complex(0,0)
-                };
+                return new Complex[] { new Complex(0, 0), new Complex(0, -1), new Complex(0, 1), new Complex(0, 0) };
             case Z:
-                return new Complex[] {
-                        new Complex(1,0),
-                        new Complex(0,0),
-                        new Complex(0,0),
-                        new Complex(-1,0)
-                };
+                return new Complex[] { new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex(-1, 0) };
             case H:
-                return new Complex[] {
-                        new Complex((float)(1 / Math.sqrt(2)),0),
-                        new Complex((float)(1 / Math.sqrt(2)),0),
-                        new Complex((float)(1 / Math.sqrt(2)),0),
-                        new Complex((float)(-1 / Math.sqrt(2)),0)
-                };
+                return new Complex[] { new Complex((float) (1 / Math.sqrt(2)), 0), new Complex((float) (1 / Math.sqrt(2)), 0), new Complex((float) (1 / Math.sqrt(2)), 0),
+                        new Complex((float) (-1 / Math.sqrt(2)), 0) };
             case S:
-                return new Complex[] {
-                        new Complex(1,0),
-                        new Complex(0,0),
-                        new Complex(0,0),
-                        new Complex(0,1)
-                };
+                return new Complex[] { new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex(0, 1) };
             case T:
-                return new Complex[] {
-                        new Complex(1,0),
-                        new Complex(0,0),
-                        new Complex(0,0),
-                        new Complex((float)(1 / Math.sqrt(2)),(float)(1 / Math.sqrt(2)))
-                };
+                return new Complex[] { new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex((float) (1 / Math.sqrt(2)), (float) (1 / Math.sqrt(2))) };
             case I:
-                return new Complex[] {
-                        new Complex(1,0),
-                        new Complex(0,0),
-                        new Complex(0,0),
-                        new Complex(1,0)
-                };
+                return new Complex[] { new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex(1, 0) };
             default:
                 return new Complex[0];
         }
     }
 
     private Complex[] phaseShiftGateData(float phi) {
-        return new Complex[] {
-                new Complex(1,0),
-                new Complex(0,0),
-                new Complex(0,0),
-                new Complex(0,phi).exp()
-        };
+        return new Complex[] { new Complex(1, 0), new Complex(0, 0), new Complex(0, 0), new Complex(0, phi).exp() };
     }
 }
