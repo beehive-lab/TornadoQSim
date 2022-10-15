@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit;
 
 import org.junit.jupiter.api.Test;
@@ -32,12 +53,8 @@ public class StepTest {
 
     @Test
     public void testStepOperations() {
-        Operation[] operations = new Operation[] {
-                new Gate(GateType.H, 0),
-                new ControlGate(new Gate(GateType.X, 1), 3, 1),
-                new Function(FunctionType.Swap, 4, 5),
-                new Instruction(InstructionType.Measure, 6)
-        };
+        Operation[] operations = new Operation[] { new Gate(GateType.H, 0), new ControlGate(new Gate(GateType.X, 1), 3, 1), new Function(FunctionType.Swap, 4, 5),
+                new Instruction(InstructionType.Measure, 6) };
 
         Step step = new Step(7);
         for (Operation operation : operations)

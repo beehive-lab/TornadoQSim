@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.math;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +46,7 @@ public class ComplexTensorTest {
         assertEquals(150, tensor.shape()[0]);
 
         // Matrix (rank 2)
-        tensor = new ComplexTensor(40,180);
+        tensor = new ComplexTensor(40, 180);
         assertEquals(2, tensor.rank());
         assertEquals(7200, tensor.size());
         assertEquals(2, tensor.shape().length);
@@ -33,7 +54,7 @@ public class ComplexTensorTest {
         assertEquals(180, tensor.shape()[1]);
 
         // Tensor (rank 3)
-        tensor = new ComplexTensor(2,3,4);
+        tensor = new ComplexTensor(2, 3, 4);
         assertEquals(3, tensor.rank());
         assertEquals(24, tensor.size());
         assertEquals(3, tensor.shape().length);
@@ -42,7 +63,7 @@ public class ComplexTensorTest {
         assertEquals(4, tensor.shape()[2]);
 
         // Tensor (rank 6)
-        tensor = new ComplexTensor(2,3,4,5,6,7);
+        tensor = new ComplexTensor(2, 3, 4, 5, 6, 7);
         assertEquals(6, tensor.rank());
         assertEquals(5040, tensor.size());
         assertEquals(6, tensor.shape().length);
@@ -56,8 +77,8 @@ public class ComplexTensorTest {
         // Invalid definition
         assertThrows(IllegalArgumentException.class, () -> new ComplexTensor());
         assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(0));
-        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(2,2,0));
-        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(-5,2,2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(2, 2, 0));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(-5, 2, 2));
     }
 
     @Test
@@ -70,7 +91,7 @@ public class ComplexTensorTest {
         assertEquals(1, tensor.shape()[0]);
 
         // Matrix (rank 2)
-        tensor = new ComplexTensor(populateComplexArray(7200), 40,180);
+        tensor = new ComplexTensor(populateComplexArray(7200), 40, 180);
         assertEquals(2, tensor.rank());
         assertEquals(7200, tensor.size());
         assertEquals(2, tensor.shape().length);
@@ -78,7 +99,7 @@ public class ComplexTensorTest {
         assertEquals(180, tensor.shape()[1]);
 
         // Tensor (rank 6)
-        tensor = new ComplexTensor(populateComplexArray(5040), 2,3,4,5,6,7);
+        tensor = new ComplexTensor(populateComplexArray(5040), 2, 3, 4, 5, 6, 7);
         assertEquals(6, tensor.rank());
         assertEquals(5040, tensor.size());
         assertEquals(6, tensor.shape().length);
@@ -90,9 +111,9 @@ public class ComplexTensorTest {
         assertEquals(7, tensor.shape()[5]);
 
         // Invalid definition
-        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(null, 2,2));
-        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(new Complex[2], 2,2));
-        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(new Complex[50], 2,2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(null, 2, 2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(new Complex[2], 2, 2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(new Complex[50], 2, 2));
     }
 
     @Test
@@ -105,7 +126,7 @@ public class ComplexTensorTest {
         assertEquals(1, tensor.shape()[0]);
 
         // Matrix (rank 2)
-        tensor = new ComplexTensor(populateFloatArray(7200), populateFloatArray(7200), 40,180);
+        tensor = new ComplexTensor(populateFloatArray(7200), populateFloatArray(7200), 40, 180);
         assertEquals(2, tensor.rank());
         assertEquals(7200, tensor.size());
         assertEquals(2, tensor.shape().length);
@@ -113,7 +134,7 @@ public class ComplexTensorTest {
         assertEquals(180, tensor.shape()[1]);
 
         // Tensor (rank 6)
-        tensor = new ComplexTensor(populateFloatArray(5040), populateFloatArray(5040), 2,3,4,5,6,7);
+        tensor = new ComplexTensor(populateFloatArray(5040), populateFloatArray(5040), 2, 3, 4, 5, 6, 7);
         assertEquals(6, tensor.rank());
         assertEquals(5040, tensor.size());
         assertEquals(6, tensor.shape().length);
@@ -125,20 +146,16 @@ public class ComplexTensorTest {
         assertEquals(7, tensor.shape()[5]);
 
         // Invalid definition
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ComplexTensor(null, populateFloatArray(4), 2,2));
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ComplexTensor(populateFloatArray(4), null, 2,2));
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ComplexTensor(populateFloatArray(2), populateFloatArray(2), 2,2));
-        assertThrows(IllegalArgumentException.class, ()
-                -> new ComplexTensor(populateFloatArray(50), populateFloatArray(50), 2,2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(null, populateFloatArray(4), 2, 2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(populateFloatArray(4), null, 2, 2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(populateFloatArray(2), populateFloatArray(2), 2, 2));
+        assertThrows(IllegalArgumentException.class, () -> new ComplexTensor(populateFloatArray(50), populateFloatArray(50), 2, 2));
     }
 
     @Test
     public void testComplexTensorDefinitionClone() {
         // Tensor (rank 6)
-        ComplexTensor original = new ComplexTensor(populateComplexArray(5040), 2,3,4,5,6,7);
+        ComplexTensor original = new ComplexTensor(populateComplexArray(5040), 2, 3, 4, 5, 6, 7);
         ComplexTensor clone = new ComplexTensor(original);
         assertEquals(original, clone);
 
@@ -169,79 +186,77 @@ public class ComplexTensorTest {
 
         // Matrix (rank 2)
         Complex[] data = populateComplexArray(6);
-        tensor = new ComplexTensor(data, 2,3);
-        assertEquals(data[0], tensor.getElement(0,0));
-        assertEquals(data[1], tensor.getElement(0,1));
-        assertEquals(data[2], tensor.getElement(0,2));
-        assertEquals(data[3], tensor.getElement(1,0));
-        assertEquals(data[4], tensor.getElement(1,1));
-        assertEquals(data[5], tensor.getElement(1,2));
+        tensor = new ComplexTensor(data, 2, 3);
+        assertEquals(data[0], tensor.getElement(0, 0));
+        assertEquals(data[1], tensor.getElement(0, 1));
+        assertEquals(data[2], tensor.getElement(0, 2));
+        assertEquals(data[3], tensor.getElement(1, 0));
+        assertEquals(data[4], tensor.getElement(1, 1));
+        assertEquals(data[5], tensor.getElement(1, 2));
 
         data = populateComplexArray(6);
-        tensor = new ComplexTensor(data, 3,2);
-        assertEquals(data[0], tensor.getElement(0,0));
-        assertEquals(data[1], tensor.getElement(0,1));
-        assertEquals(data[2], tensor.getElement(1,0));
-        assertEquals(data[3], tensor.getElement(1,1));
-        assertEquals(data[4], tensor.getElement(2,0));
-        assertEquals(data[5], tensor.getElement(2,1));
+        tensor = new ComplexTensor(data, 3, 2);
+        assertEquals(data[0], tensor.getElement(0, 0));
+        assertEquals(data[1], tensor.getElement(0, 1));
+        assertEquals(data[2], tensor.getElement(1, 0));
+        assertEquals(data[3], tensor.getElement(1, 1));
+        assertEquals(data[4], tensor.getElement(2, 0));
+        assertEquals(data[5], tensor.getElement(2, 1));
 
-        tensor.insertElement(newElement, 2,0);
-        assertEquals(data[3], tensor.getElement(1,1));
-        assertEquals(newElement, tensor.getElement(2,0));
-        assertEquals(data[5], tensor.getElement(2,1));
+        tensor.insertElement(newElement, 2, 0);
+        assertEquals(data[3], tensor.getElement(1, 1));
+        assertEquals(newElement, tensor.getElement(2, 0));
+        assertEquals(data[5], tensor.getElement(2, 1));
 
         // Matrix (rank 3)
         data = populateComplexArray(8);
-        tensor = new ComplexTensor(data, 2,2,2);
-        assertEquals(data[0], tensor.getElement(0,0,0));
-        assertEquals(data[1], tensor.getElement(0,0,1));
-        assertEquals(data[2], tensor.getElement(0,1,0));
-        assertEquals(data[3], tensor.getElement(0,1,1));
-        assertEquals(data[4], tensor.getElement(1,0,0));
-        assertEquals(data[5], tensor.getElement(1,0,1));
-        assertEquals(data[6], tensor.getElement(1,1,0));
-        assertEquals(data[7], tensor.getElement(1,1,1));
+        tensor = new ComplexTensor(data, 2, 2, 2);
+        assertEquals(data[0], tensor.getElement(0, 0, 0));
+        assertEquals(data[1], tensor.getElement(0, 0, 1));
+        assertEquals(data[2], tensor.getElement(0, 1, 0));
+        assertEquals(data[3], tensor.getElement(0, 1, 1));
+        assertEquals(data[4], tensor.getElement(1, 0, 0));
+        assertEquals(data[5], tensor.getElement(1, 0, 1));
+        assertEquals(data[6], tensor.getElement(1, 1, 0));
+        assertEquals(data[7], tensor.getElement(1, 1, 1));
 
-        tensor.insertElement(newElement, 1,0,1);
-        assertEquals(data[4], tensor.getElement(1,0,0));
-        assertEquals(newElement, tensor.getElement(1,0,1));
-        assertEquals(data[6], tensor.getElement(1,1,0));
+        tensor.insertElement(newElement, 1, 0, 1);
+        assertEquals(data[4], tensor.getElement(1, 0, 0));
+        assertEquals(newElement, tensor.getElement(1, 0, 1));
+        assertEquals(data[6], tensor.getElement(1, 1, 0));
 
         // Invalid operation
-        ComplexTensor finalTensor = new ComplexTensor(5,5);
-        assertThrows(IllegalArgumentException.class, () -> finalTensor.insertElement(null, 0,0));
-        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.insertElement(newElement, -1,0));
-        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.insertElement(newElement, 5,0));
+        ComplexTensor finalTensor = new ComplexTensor(5, 5);
+        assertThrows(IllegalArgumentException.class, () -> finalTensor.insertElement(null, 0, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.insertElement(newElement, -1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.insertElement(newElement, 5, 0));
 
-        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.getElement(-1,0));
-        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.getElement(5,0));
+        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.getElement(-1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> finalTensor.getElement(5, 0));
     }
 
     @Test
     public void testComplexTensorEquality() {
         Complex[] data = populateComplexArray(16);
-        ComplexTensor a = new ComplexTensor(data, 4,4);
-        ComplexTensor b = new ComplexTensor(data, 4,4);
+        ComplexTensor a = new ComplexTensor(data, 4, 4);
+        ComplexTensor b = new ComplexTensor(data, 4, 4);
         assertEquals(a, b);
 
-        b.insertElement(new Complex(100, 100), 0,3);
+        b.insertElement(new Complex(100, 100), 0, 3);
         assertNotEquals(a, b);
 
-        ComplexTensor c = new ComplexTensor(data, 2,2,2,2);
-        assertNotEquals(a,c);
+        ComplexTensor c = new ComplexTensor(data, 2, 2, 2, 2);
+        assertNotEquals(a, c);
     }
 
     @Test
     public void testComplexTensorString() {
-        ComplexTensor tensor = new ComplexTensor(2,2);
-        String string = "ComplexTensor { rank: 2, shape: [2, 2], data:"
-                + " [0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i] }";
+        ComplexTensor tensor = new ComplexTensor(2, 2);
+        String string = "ComplexTensor { rank: 2, shape: [2, 2], data:" + " [0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i, 0.000 + 0.000i] }";
         assertEquals(string, tensor.toString());
 
-        tensor.insertElement(new Complex(5, -5), 1,0);
-        string = "ComplexTensor { rank: 2, shape: [2, 2], data:"
-                + " [0.000 + 0.000i, 0.000 + 0.000i, 5.000 - 5.000i, 0.000 + 0.000i] }";
+        tensor.insertElement(new Complex(5, -5), 1, 0);
+        string = "ComplexTensor { rank: 2, shape: [2, 2], data:" + " [0.000 + 0.000i, 0.000 + 0.000i, 5.000 - 5.000i, 0.000 + 0.000i] }";
         assertEquals(string, tensor.toString());
     }
 

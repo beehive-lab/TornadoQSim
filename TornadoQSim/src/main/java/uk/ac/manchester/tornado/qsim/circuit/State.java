@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit;
 
 import uk.ac.manchester.tornado.qsim.circuit.utils.StateConverter;
@@ -8,9 +29,12 @@ import java.util.Objects;
 import java.util.Random;
 
 /**
- * Represents a state of a quantum system (exponential size in terms of number of qubits). The state can be queried
- * to retrive information for particular qubit, particular state or to obtain the whole state vector. Information
- * about the collapsed state of the whole system or single qubit can also be obtained.
+ * Represents a state of a quantum system (exponential size in terms of number
+ * of qubits). The state can be queried to retrive information for particular
+ * qubit, particular state or to obtain the whole state vector. Information
+ * about the collapsed state of the whole system or single qubit can also be
+ * obtained.
+ * 
  * @author Ales Kubicek
  */
 public class State {
@@ -20,20 +44,25 @@ public class State {
 
     /**
      * Constructs a quantum state of 2^noQubits amplitudes.
-     * @param noQubits number of qubits.
+     * 
+     * @param noQubits
+     *            number of qubits.
      */
     public State(int noQubits) {
         if (noQubits < 1)
             throw new IllegalArgumentException("Number of qubits in a state must be greater than 0.");
         this.noQubits = noQubits;
-        stateVector = new ComplexTensor((int)Math.pow(2, noQubits));
-        stateVector.insertElement(new Complex(1,0),0);
+        stateVector = new ComplexTensor((int) Math.pow(2, noQubits));
+        stateVector.insertElement(new Complex(1, 0), 0);
         random = new Random();
     }
 
     /**
-     * Constructs a quantum state based on supplied initial state vector (must be normalized).
-     * @param initialStateVector normalized state vector.
+     * Constructs a quantum state based on supplied initial state vector (must be
+     * normalized).
+     * 
+     * @param initialStateVector
+     *            normalized state vector.
      */
     public State(ComplexTensor initialStateVector) {
         if (!isValidInitialStateVector(initialStateVector))
@@ -46,16 +75,24 @@ public class State {
     }
 
     /**
-     * Sets seed for the random generator used for collapsing states / qubits (Unit tests use only).
-     * @param seed random generator seed.
+     * Sets seed for the random generator used for collapsing states / qubits (Unit
+     * tests use only).
+     * 
+     * @param seed
+     *            random generator seed.
      */
-    protected void setSeed(long seed) { random.setSeed(seed); }
+    protected void setSeed(long seed) {
+        random.setSeed(seed);
+    }
 
     /**
      * Gets the full state vector.
+     * 
      * @return full state vector.
      */
-    public ComplexTensor getStateVector() { return stateVector; }
+    public ComplexTensor getStateVector() {
+        return stateVector;
+    }
 
     public void setStateVector(ComplexTensor stateVector) {
         if (!isValidUpdatedStateVector(stateVector))
@@ -67,12 +104,16 @@ public class State {
 
     /**
      * Gets the size (number of amplitudes) of the state vector.
+     * 
      * @return state vector size.
      */
-    public int size() { return stateVector.size(); }
+    public int size() {
+        return stateVector.size();
+    }
 
     /**
      * Checks whether the state vector is normalized.
+     * 
      * @return true, if the state vector is normalized.
      */
     public boolean isNormalized() {
@@ -85,7 +126,9 @@ public class State {
 
     /**
      * Collapses the supplied qubit to the state 0 or 1.
-     * @param qubit qubit to be collapsed.
+     * 
+     * @param qubit
+     *            qubit to be collapsed.
      * @return state to which the qubit collapsed (0 or 1).
      */
     public int getQubitCollapsed(int qubit) {
@@ -94,7 +137,9 @@ public class State {
 
     /**
      * Gets the probability of collapsing to the state 1.
-     * @param qubit qubit for which to retrieve the probability.
+     * 
+     * @param qubit
+     *            qubit for which to retrieve the probability.
      * @return probability value (0.0 - 1.0).
      */
     public float getQubitProbability(int qubit) {
@@ -108,8 +153,11 @@ public class State {
     }
 
     /**
-     * Gets the aplitude (complex number) of the supplied state (eg. state '0010' → 2).
-     * @param state single quantum state of the state vector.
+     * Gets the aplitude (complex number) of the supplied state (eg. state '0010' →
+     * 2).
+     * 
+     * @param state
+     *            single quantum state of the state vector.
      * @return complex amplitude of the state.
      */
     public Complex getStateAmplitude(int state) {
@@ -119,8 +167,11 @@ public class State {
     }
 
     /**
-     * Gets the probability of the quantum system to collapse to the supplied state (eg. state '0010' → 2).
-     * @param state single quantum state of the state vector.
+     * Gets the probability of the quantum system to collapse to the supplied state
+     * (eg. state '0010' → 2).
+     * 
+     * @param state
+     *            single quantum state of the state vector.
      * @return probability value (0.0 - 1.0).
      */
     public float getStateProbability(int state) {
@@ -131,6 +182,7 @@ public class State {
 
     /**
      * Gets the collapsed state of the whole quantum system.
+     * 
      * @return collapsed quantum state (eg. 2 → '0010');
      */
     public int collapse() {
@@ -149,8 +201,10 @@ public class State {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         State state = (State) o;
         return noQubits == state.noQubits && stateVector.equals(state.stateVector);
     }
@@ -197,15 +251,10 @@ public class State {
     }
 
     private boolean isValidInitialStateVector(ComplexTensor vector) {
-        return vector != null
-                && vector.rank() == 1
-                && vector.size() >= 2
-                && (vector.size() & (vector.size() - 1)) == 0;
+        return vector != null && vector.rank() == 1 && vector.size() >= 2 && (vector.size() & (vector.size() - 1)) == 0;
     }
 
     private boolean isValidUpdatedStateVector(ComplexTensor vector) {
-        return vector != null
-                && vector.rank() == stateVector.rank()
-                && vector.size() == stateVector.size();
+        return vector != null && vector.rank() == stateVector.rank() && vector.size() == stateVector.size();
     }
 }

@@ -1,3 +1,24 @@
+/*
+ * This file is part of TornadoQSim:
+ * A Java-based quantum computing framework accelerated with TornadoVM.
+ *
+ * URL: https://github.com/beehive-lab/TornadoQSim
+ *
+ * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * The University of Manchester. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.manchester.tornado.qsim.circuit;
 
 import org.junit.jupiter.api.Test;
@@ -37,9 +58,9 @@ public class CircuitTest {
         circuit.H(3);
         circuit.S(4);
         circuit.T(5);
-        circuit.H(0,1,2,3,4,5);
+        circuit.H(0, 1, 2, 3, 4, 5);
         circuit.X(3);
-        circuit.R((float)(Math.PI / 2), 4);
+        circuit.R((float) (Math.PI / 2), 4);
 
         // Check circuit properties
         assertEquals(6, circuit.qubitCount());
@@ -67,13 +88,13 @@ public class CircuitTest {
     public void testCircuitControlGates() {
         // Build circuit from control gates only
         Circuit circuit = new Circuit(6);
-        circuit.CX(0,1);
-        circuit.CY(2,3);
-        circuit.CZ(4,5);
-        circuit.CH(5,3);
+        circuit.CX(0, 1);
+        circuit.CY(2, 3);
+        circuit.CZ(4, 5);
+        circuit.CH(5, 3);
         circuit.CS(4, 5);
         circuit.CT(2, 0);
-        circuit.CR(0,5,(float)(Math.PI / 2));
+        circuit.CR(0, 5, (float) (Math.PI / 2));
 
         // Check circuit properties
         assertEquals(6, circuit.qubitCount());
@@ -103,10 +124,10 @@ public class CircuitTest {
     @Test
     public void testCircuitFunctions() {
         // Build circuit from functions only
-        OperationDataProvider.getInstance().registerFunctionData("custom", new ComplexTensor(2,2));
+        OperationDataProvider.getInstance().registerFunctionData("custom", new ComplexTensor(2, 2));
         Circuit circuit = new Circuit(4);
-        circuit.swap(0,2);
-        circuit.customFunction("custom",0,0);
+        circuit.swap(0, 2);
+        circuit.customFunction("custom", 0, 0);
 
         // Check circuit properties
         assertEquals(4, circuit.qubitCount());
@@ -125,18 +146,18 @@ public class CircuitTest {
 
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(-1, 0));
         assertThrows(IllegalArgumentException.class, () -> circuit.swap(3, 4));
-        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",-1, 0));
-        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom",2, 10));
-        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("invalid",2, 3));
+        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom", -1, 0));
+        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("custom", 2, 10));
+        assertThrows(IllegalArgumentException.class, () -> circuit.customFunction("invalid", 2, 3));
     }
 
     @Test
     public void testCircuitInstructions() {
         // Build circuit from instructions only
         Circuit circuit = new Circuit(3);
-        circuit.measure(0,1,2);
-        circuit.reset(2,1);
-        circuit.measure(1,2);
+        circuit.measure(0, 1, 2);
+        circuit.reset(2, 1);
+        circuit.measure(1, 2);
 
         // Check circuit properties
         assertEquals(3, circuit.qubitCount());
@@ -163,12 +184,12 @@ public class CircuitTest {
     @Test
     public void testCircuitAppend() {
         Circuit circuit = new Circuit(3);
-        circuit.H(0,1,2);
-        circuit.swap(1,2);
+        circuit.H(0, 1, 2);
+        circuit.swap(1, 2);
 
         Circuit another = new Circuit(3);
-        another.X(0,2);
-        another.measure(0,1,2);
+        another.X(0, 2);
+        another.measure(0, 1, 2);
 
         circuit.appendCircuit(another);
 
@@ -191,25 +212,25 @@ public class CircuitTest {
     @Test
     public void testCircuitEquality() {
         Circuit a = new Circuit(3);
-        a.H(0,1,2);
-        a.swap(0,1);
+        a.H(0, 1, 2);
+        a.swap(0, 1);
         a.X(1);
-        a.measure(0,1,2);
+        a.measure(0, 1, 2);
 
         Circuit b = new Circuit(3);
         b.H(0);
         b.H(1);
         b.H(2);
-        b.swap(0,1);
+        b.swap(0, 1);
         b.X(1);
-        b.measure(0,1);
+        b.measure(0, 1);
         b.measure(2);
 
         Circuit c = new Circuit(3);
-        c.H(0,1,2);
-        c.swap(0,1);
+        c.H(0, 1, 2);
+        c.swap(0, 1);
         c.Y(1);
-        c.measure(0,1,2);
+        c.measure(0, 1, 2);
 
         assertEquals(a, b);
         assertNotEquals(a, c);
@@ -222,18 +243,15 @@ public class CircuitTest {
             if (operation == null) {
                 assertNull(types[qubit]);
                 assertTrue(step.isQubitFree(qubit));
-            }
-            else if (operation instanceof Gate) {
-                Gate gate = (Gate)(step.getOperation(qubit));
+            } else if (operation instanceof Gate) {
+                Gate gate = (Gate) (step.getOperation(qubit));
                 assertEquals(types[qubit], gate.type());
                 assertFalse(step.isQubitFree(qubit));
-            }
-            else if (operation instanceof ControlGate) {
-                ControlGate controlGate = (ControlGate)(step.getOperation(qubit));
+            } else if (operation instanceof ControlGate) {
+                ControlGate controlGate = (ControlGate) (step.getOperation(qubit));
                 assertEquals(types[qubit], controlGate.gate().type());
                 assertFalse(step.isQubitFree(qubit));
-            }
-            else {
+            } else {
                 throw new UnsupportedOperationException("Only Gate or ControlGate supported for this assertStep.");
             }
         }
@@ -246,13 +264,11 @@ public class CircuitTest {
             if (operation == null) {
                 assertNull(types[qubit]);
                 assertTrue(step.isQubitFree(qubit));
-            }
-            else if (operation instanceof Function) {
-                Function function = (Function)(step.getOperation(qubit));
+            } else if (operation instanceof Function) {
+                Function function = (Function) (step.getOperation(qubit));
                 assertEquals(types[qubit], function.type());
                 assertFalse(step.isQubitFree(qubit));
-            }
-            else {
+            } else {
                 throw new UnsupportedOperationException("Only Gate or ControlGate supported for this assertStep.");
             }
         }
@@ -265,13 +281,11 @@ public class CircuitTest {
             if (operation == null) {
                 assertNull(types[qubit]);
                 assertTrue(step.isQubitFree(qubit));
-            }
-            else if (operation instanceof Instruction) {
-                Instruction instruction = (Instruction)(step.getOperation(qubit));
+            } else if (operation instanceof Instruction) {
+                Instruction instruction = (Instruction) (step.getOperation(qubit));
                 assertEquals(types[qubit], instruction.type());
                 assertFalse(step.isQubitFree(qubit));
-            }
-            else {
+            } else {
                 throw new UnsupportedOperationException("Only Gate or ControlGate supported for this assertStep.");
             }
         }
