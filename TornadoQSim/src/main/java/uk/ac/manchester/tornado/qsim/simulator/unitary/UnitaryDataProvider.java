@@ -22,6 +22,7 @@
 package uk.ac.manchester.tornado.qsim.simulator.unitary;
 
 import uk.ac.manchester.tornado.api.TaskGraph;
+import uk.ac.manchester.tornado.api.TornadoExecutionPlan;
 import uk.ac.manchester.tornado.api.enums.DataTransferMode;
 import uk.ac.manchester.tornado.qsim.circuit.Step;
 import uk.ac.manchester.tornado.qsim.circuit.operation.*;
@@ -135,11 +136,12 @@ class UnitaryDataProvider {
 
     private void buildControlGate(float[] gR, float[] gI, int c, int t, float[] rR, float[] rI, int rSize) {
         if (accelerated) {
-            new TaskGraph("sControlGate")
+            TaskGraph taskGraph = new TaskGraph("sControlGate")
                     .transferToHost(DataTransferMode.FIRST_EXECUTION, gR, gI)
                     .task("tBuildControlGate", UnitaryOperand::buildControlGate, gR, gI, c, t, rR, rI, rSize)
-                    .transferToHost(DataTransferMode.EVERY_EXECUTION, rR, rI)
-                    .execute();
+                    .transferToHost(DataTransferMode.EVERY_EXECUTION, rR, rI);
+            TornadoExecutionPlan executionPlan = new TornadoExecutionPlan(taskGraph.snapshot());
+            executionPlan.execute();
         } else {
             UnitaryOperand.buildControlGate(gR, gI, c, t, rR, rI, rSize);
         }

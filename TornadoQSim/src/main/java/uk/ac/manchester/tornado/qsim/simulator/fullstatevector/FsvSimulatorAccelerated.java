@@ -21,7 +21,9 @@
  */
 package uk.ac.manchester.tornado.qsim.simulator.fullstatevector;
 
+import uk.ac.manchester.tornado.api.ImmutableTaskGraph;
 import uk.ac.manchester.tornado.api.TaskGraph;
+import uk.ac.manchester.tornado.api.TornadoExecutionPlan;
 import uk.ac.manchester.tornado.api.enums.DataTransferMode;
 import uk.ac.manchester.tornado.qsim.circuit.Circuit;
 import uk.ac.manchester.tornado.qsim.circuit.State;
@@ -48,6 +50,10 @@ public class FsvSimulatorAccelerated implements Simulator {
 
     private TaskGraph applyGateTaskGraph;
     private TaskGraph applyControlTaskGraph;
+    private ImmutableTaskGraph applyGateImmutableTaskGraph;
+    private ImmutableTaskGraph applyControlImmutableTaskGraph;
+    private TornadoExecutionPlan applyGateExecutionPlan;
+    private TornadoExecutionPlan applyControlExecutionPlan;
 
     private int[] targetQubit;
     private int[] controlQubit;
@@ -123,7 +129,7 @@ public class FsvSimulatorAccelerated implements Simulator {
 
     private void applyGate(State state, Gate gate) {
         updateInputDataOfTaskGraph(state, gate);
-        applyGateTaskGraph.execute();
+        applyGateExecutionPlan.execute();
         updateOutputDataOfGate(state);
     }
 
@@ -149,6 +155,8 @@ public class FsvSimulatorAccelerated implements Simulator {
                     .transferToDevice(DataTransferMode.EVERY_EXECUTION, targetQubit, stateReal, stateImag, gateReal, gateImag)
                     .task("applyGateTask", FsvOperand::applyGate, targetQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
                     .transferToHost(DataTransferMode.EVERY_EXECUTION ,stateReal, stateImag);
+            applyGateImmutableTaskGraph = applyGateTaskGraph.snapshot();
+            applyGateExecutionPlan = new TornadoExecutionPlan(applyGateImmutableTaskGraph);
             // @formatter:on
         } else {
             targetQubit[0] = gate.targetQubit()[0];
@@ -166,7 +174,7 @@ public class FsvSimulatorAccelerated implements Simulator {
 
     private void applyControlGate(State state, ControlGate controlGate) {
         updateInputDataOfTaskGraph(state, controlGate);
-        applyControlTaskGraph.execute();
+        applyControlExecutionPlan.execute();
         updateOutputDataOfControlGate(state);
     }
 
@@ -193,6 +201,8 @@ public class FsvSimulatorAccelerated implements Simulator {
                     .transferToDevice(DataTransferMode.EVERY_EXECUTION, targetQubit, controlQubit, stateRealControl, stateImagControl, gateReal, gateImag)
                     .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateRealControl, stateImagControl, halfRows, gateReal, gateImag)
                     .transferToHost(DataTransferMode.EVERY_EXECUTION, stateRealControl, stateImagControl);
+            applyControlImmutableTaskGraph = applyControlTaskGraph.snapshot();
+            applyControlExecutionPlan = new TornadoExecutionPlan(applyControlImmutableTaskGraph);
             // @formatter:on
         } else {
             targetQubit[0] = gate.targetQubit()[0];
