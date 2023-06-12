@@ -40,7 +40,7 @@ export PATH="${PATH}:${TORNADO_QSIM_ROOT=}/bin"
 export TORNADO_ROOT=<path to TornadoVM>
 export PATH="${PATH}:${TORNADO_ROOT}/bin/bin/"
 export TORNADO_SDK=${TORNADO_ROOT}/bin/sdk
-export JAVA_HOME=${TORNADO_ROOT}/TornadoVM-GraalJDK11/graalvm-ce-java11-22.2.0
+export JAVA_HOME=${TORNADO_ROOT}/TornadoVM-GraalJDK11/graalvm-ce-java11-22.3.2
 ```
 
 Load the environment:

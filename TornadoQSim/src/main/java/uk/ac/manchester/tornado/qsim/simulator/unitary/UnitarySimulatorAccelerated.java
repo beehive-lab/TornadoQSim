@@ -4,7 +4,7 @@
  *
  * URL: https://github.com/beehive-lab/TornadoQSim
  *
- * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * Copyright (c) 2021-2023, APT Group, Department of Computer Science,
  * The University of Manchester. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,10 @@
  */
 package uk.ac.manchester.tornado.qsim.simulator.unitary;
 
-import uk.ac.manchester.tornado.api.TaskSchedule;
+import uk.ac.manchester.tornado.api.ImmutableTaskGraph;
+import uk.ac.manchester.tornado.api.TaskGraph;
+import uk.ac.manchester.tornado.api.TornadoExecutionPlan;
+import uk.ac.manchester.tornado.api.enums.DataTransferMode;
 import uk.ac.manchester.tornado.qsim.circuit.Circuit;
 import uk.ac.manchester.tornado.qsim.circuit.State;
 import uk.ac.manchester.tornado.qsim.circuit.Step;
@@ -43,7 +46,9 @@ import java.util.ListIterator;
 public class UnitarySimulatorAccelerated implements Simulator {
     private final UnitaryDataProvider dataProvider;
 
-    private TaskSchedule stepMulSchedule,stepVectorSchedule;
+    private TaskGraph stepMulTaskGraph, stepVectorTaskGraph;
+    private ImmutableTaskGraph stepMulImmutableTaskGraph, stepVectorImmutableTaskGraph;
+    private TornadoExecutionPlan stepMulExecutionPlan, stepVectorExecutionPlan;
 
     private float[] stepAReal,stepAImag,stepBReal,stepBImag,stepResultReal,stepResultImag;
     private State finalState;
@@ -56,7 +61,7 @@ public class UnitarySimulatorAccelerated implements Simulator {
         dataProvider = new UnitaryDataProvider(false);
         this.noQubits = noQubits;
         unitaryDimension = (int) Math.pow(2, noQubits);
-        prepareTaskSchedules();
+        prepareTaskGraphs();
     }
 
     @Override
@@ -73,7 +78,7 @@ public class UnitarySimulatorAccelerated implements Simulator {
             matrixMultiplication();
         }
 
-        stepVectorSchedule.execute();
+        stepVectorExecutionPlan.execute();
         return finalState;
     }
 
@@ -82,7 +87,7 @@ public class UnitarySimulatorAccelerated implements Simulator {
         return simulateFullState(circuit).collapse();
     }
 
-    private void prepareTaskSchedules() {
+    private void prepareTaskGraphs() {
         int unitarySize = unitaryDimension * unitaryDimension;
 
         // Complex matrix multiplication
@@ -93,18 +98,23 @@ public class UnitarySimulatorAccelerated implements Simulator {
         stepResultReal = new float[unitarySize];
         stepResultImag = new float[unitarySize];
 
-        stepMulSchedule = new TaskSchedule("stepMul").streamIn(stepAReal, stepAImag, stepBReal, stepBImag)
+        stepMulTaskGraph = new TaskGraph("stepMul")
+                .transferToDevice(DataTransferMode.EVERY_EXECUTION, stepAReal, stepAImag, stepBReal, stepBImag)
                 .task("stepMulTask", UnitaryOperand::matrixProduct, stepAReal, stepAImag, unitaryDimension, unitaryDimension, stepBReal, stepBImag, unitaryDimension, stepResultReal, stepResultImag)
-                .streamOut(stepResultReal, stepResultImag);
+                .transferToHost(DataTransferMode.EVERY_EXECUTION, stepResultReal, stepResultImag);
+        stepMulImmutableTaskGraph = stepMulTaskGraph.snapshot();
+        stepMulExecutionPlan = new TornadoExecutionPlan(stepMulImmutableTaskGraph);
 
         // Application of complex unitary matrix to final state vector
         ComplexTensor initVector = new State(noQubits).getStateVector();
         finalState = new State(noQubits);
 
-        stepVectorSchedule = new TaskSchedule("stepVector").streamIn(stepResultReal, stepResultImag, initVector.getRawRealData(), initVector.getRawImagData())
+        stepVectorTaskGraph = new TaskGraph("stepVector").transferToDevice(DataTransferMode.EVERY_EXECUTION, stepResultReal, stepResultImag, initVector.getRawRealData(), initVector.getRawImagData())
                 .task("stepVectorTask", UnitaryOperand::matrixVectorProduct, stepResultReal, stepResultImag, unitaryDimension, unitaryDimension, initVector.getRawRealData(),
                         initVector.getRawImagData(), finalState.getStateVector().getRawRealData(), finalState.getStateVector().getRawImagData())
-                .streamOut(finalState.getStateVector().getRawRealData(), finalState.getStateVector().getRawImagData());
+                .transferToHost(DataTransferMode.EVERY_EXECUTION, finalState.getStateVector().getRawRealData(), finalState.getStateVector().getRawImagData());
+        stepVectorImmutableTaskGraph = stepVectorTaskGraph.snapshot();
+        stepVectorExecutionPlan = new TornadoExecutionPlan(stepVectorImmutableTaskGraph);
     }
 
     private void prepareStepUnitary(int noQubits, Step step, float[] resultReal, float[] resultImag) {
@@ -154,7 +164,7 @@ public class UnitarySimulatorAccelerated implements Simulator {
         System.arraycopy(stepResultReal, 0, stepAReal, 0, stepAReal.length);
         System.arraycopy(stepResultImag, 0, stepAImag, 0, stepAImag.length);
 
-        stepMulSchedule.execute();
+        stepMulExecutionPlan.execute();
     }
 
 }

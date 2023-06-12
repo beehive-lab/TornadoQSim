@@ -4,7 +4,7 @@
  *
  * URL: https://github.com/beehive-lab/TornadoQSim
  *
- * Copyright (c) 2021-2022, APT Group, Department of Computer Science,
+ * Copyright (c) 2021-2023, APT Group, Department of Computer Science,
  * The University of Manchester. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,10 @@
  */
 package uk.ac.manchester.tornado.qsim.simulator.fullstatevector;
 
-import uk.ac.manchester.tornado.api.TaskSchedule;
+import uk.ac.manchester.tornado.api.ImmutableTaskGraph;
+import uk.ac.manchester.tornado.api.TaskGraph;
+import uk.ac.manchester.tornado.api.TornadoExecutionPlan;
+import uk.ac.manchester.tornado.api.enums.DataTransferMode;
 import uk.ac.manchester.tornado.qsim.circuit.Circuit;
 import uk.ac.manchester.tornado.qsim.circuit.State;
 import uk.ac.manchester.tornado.qsim.circuit.Step;
@@ -45,8 +48,12 @@ import java.util.List;
 public class FsvSimulatorAccelerated implements Simulator {
     private final FsvDataProvider dataProvider;
 
-    private TaskSchedule applyGateSchedule;
-    private TaskSchedule applyControlGateSchedule;
+    private TaskGraph applyGateTaskGraph;
+    private TaskGraph applyControlTaskGraph;
+    private ImmutableTaskGraph applyGateImmutableTaskGraph;
+    private ImmutableTaskGraph applyControlImmutableTaskGraph;
+    private TornadoExecutionPlan applyGateExecutionPlan;
+    private TornadoExecutionPlan applyControlExecutionPlan;
 
     private int[] targetQubit;
     private int[] controlQubit;
@@ -121,16 +128,16 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void applyGate(State state, Gate gate) {
-        updateInputDataOfTaskSchedule(state, gate);
-        applyGateSchedule.execute();
+        updateInputDataOfTaskGraph(state, gate);
+        applyGateExecutionPlan.execute();
         updateOutputDataOfGate(state);
     }
 
-    private void updateInputDataOfTaskSchedule(State state, Gate gate) {
+    private void updateInputDataOfTaskGraph(State state, Gate gate) {
         int halfRows = state.size() / 2;
         ComplexTensor gateData = dataProvider.getOperationData(gate);
 
-        if (applyGateSchedule == null) {
+        if (applyGateTaskGraph == null) {
             targetQubit[0] = gate.targetQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateReal, 0, state.getStateVector().getRawRealData().length);
             System.arraycopy(state.getStateVector().getRawImagData(), 0, stateImag, 0, state.getStateVector().getRawImagData().length);
@@ -144,10 +151,12 @@ public class FsvSimulatorAccelerated implements Simulator {
             System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
 
             // @formatter:off
-            applyGateSchedule = new TaskSchedule("applyGate")
-                    .streamIn(targetQubit, stateReal, stateImag, gateReal, gateImag)
+            applyGateTaskGraph = new TaskGraph("applyGate")
+                    .transferToDevice(DataTransferMode.EVERY_EXECUTION, targetQubit, stateReal, stateImag, gateReal, gateImag)
                     .task("applyGateTask", FsvOperand::applyGate, targetQubit, stateReal, stateImag, halfRows, gateReal, gateImag)
-                    .streamOut(stateReal, stateImag);
+                    .transferToHost(DataTransferMode.EVERY_EXECUTION ,stateReal, stateImag);
+            applyGateImmutableTaskGraph = applyGateTaskGraph.snapshot();
+            applyGateExecutionPlan = new TornadoExecutionPlan(applyGateImmutableTaskGraph);
             // @formatter:on
         } else {
             targetQubit[0] = gate.targetQubit()[0];
@@ -164,16 +173,16 @@ public class FsvSimulatorAccelerated implements Simulator {
     }
 
     private void applyControlGate(State state, ControlGate controlGate) {
-        updateInputDataOfTaskSchedule(state, controlGate);
-        applyControlGateSchedule.execute();
+        updateInputDataOfTaskGraph(state, controlGate);
+        applyControlExecutionPlan.execute();
         updateOutputDataOfControlGate(state);
     }
 
-    private void updateInputDataOfTaskSchedule(State state, ControlGate gate) {
+    private void updateInputDataOfTaskGraph(State state, ControlGate gate) {
         int halfRows = state.size() / 2;
         ComplexTensor gateData = dataProvider.getOperationData(gate);
 
-        if (applyControlGateSchedule == null) {
+        if (applyControlTaskGraph == null) {
             targetQubit[0] = gate.targetQubit()[0];
             controlQubit[0] = gate.controlQubit()[0];
             System.arraycopy(state.getStateVector().getRawRealData(), 0, stateRealControl, 0, state.getStateVector().getRawRealData().length);
@@ -188,10 +197,12 @@ public class FsvSimulatorAccelerated implements Simulator {
             System.arraycopy(gateData.getRawImagData(), 0, gateImag, 0, gateData.getRawRealData().length);
 
             // @formatter:off
-            applyControlGateSchedule = new TaskSchedule("applyControlGate")
-                    .streamIn(targetQubit, controlQubit, stateRealControl, stateImagControl, gateReal, gateImag)
+            applyControlTaskGraph = new TaskGraph("applyControlGate")
+                    .transferToDevice(DataTransferMode.EVERY_EXECUTION, targetQubit, controlQubit, stateRealControl, stateImagControl, gateReal, gateImag)
                     .task("applyControlGateTask", FsvOperand::applyControlGate, targetQubit, controlQubit, stateRealControl, stateImagControl, halfRows, gateReal, gateImag)
-                    .streamOut(stateRealControl, stateImagControl);
+                    .transferToHost(DataTransferMode.EVERY_EXECUTION, stateRealControl, stateImagControl);
+            applyControlImmutableTaskGraph = applyControlTaskGraph.snapshot();
+            applyControlExecutionPlan = new TornadoExecutionPlan(applyControlImmutableTaskGraph);
             // @formatter:on
         } else {
             targetQubit[0] = gate.targetQubit()[0];
